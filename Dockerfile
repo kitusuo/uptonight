@@ -23,8 +23,11 @@ RUN venv/bin/pip install pyinstaller
 
 COPY uptonight uptonight
 COPY targets targets
+COPY skyfield-data skyfield-data
 COPY main.py .
 
+# ENV PATH="/app/venv/bin:$PATH"
+# ENTRYPOINT ["python3", "main.py"]
 RUN venv/bin/pyinstaller --recursive-copy-metadata matplotlib --collect-all dateutil --onefile main.py 
 
 # Run image
@@ -35,6 +38,7 @@ WORKDIR /app
 # Copy only the necessary files from the build stage
 COPY --from=compile-image /app/dist/main /app/main
 COPY --from=compile-image /app/targets /app/targets
+COPY --from=compile-image /app/skyfield-data /app/skyfield-data
 
 # Run the UpTonight executable
 ENTRYPOINT ["/app/main"]

@@ -184,12 +184,13 @@ class UpTonightObjects:
                         )
 
                         # Plot target
+                        # Label only the objects within mac number within threshold
                         ax = plot_sky(
                             target,
                             self._observer,
                             time_grid,
                             style_kwargs=dict(
-                                color=cmap(target_no / within_threshold * 0.75),
+                                color=cmap(target_no / within_threshold * 0.75),  # if target_no < self._constraints["max_number_within_threshold"] else "#808080",
                                 label="_Hidden",
                                 marker=".",
                                 s=0.1,
@@ -202,8 +203,8 @@ class UpTonightObjects:
                             self._observer,
                             self._observation_timeframe["observing_start_time"],
                             style_kwargs=dict(
-                                color=cmap(target_no / within_threshold * 0.75),
-                                label=f"{str(target_no + 1)}: {target.name}",
+                                color=cmap(target_no / within_threshold * 0.75),  # if target_no < self._constraints["max_number_within_threshold"] else "#808080",
+                                label=f"{str(target_no + 1)}: {target.name}",  # if target_no < self._constraints["max_number_within_threshold"] else "_Hidden",
                                 marker=marker,
                                 s=30,
                             ),

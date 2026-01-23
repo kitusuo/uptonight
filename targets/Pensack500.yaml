@@ -24,7 +24,7 @@
   type: Galaxy
 - constellation: Andromeda
   dec: +41 16
-  description: M31 ANDROMEDA GALAXY
+  description: M31 Andromeda Galaxy
   mag: 3.5
   name: NGC 224
   ra: 00 42.7
@@ -32,7 +32,7 @@
   type: Galaxy
 - constellation: Andromeda
   dec: +35 43
-  description: MIRACH'S GHOST
+  description: Mirach's Ghost
   mag: 10.3
   name: NGC 404
   ra: 01 09.4
@@ -80,7 +80,7 @@
   type: Open Cluster
 - constellation: Aquila
   dec: +06 32
-  description: GHOST OF THE MOON, The Snowglobe/HORSESHOE/EAGLE'S NEST
+  description: Ghost Of The Moon, The Snowglobe/Horseshoe/Eagle's Nest
   mag: 11.8
   name: NGC 6781
   ra: 19 18.5
@@ -88,7 +88,7 @@
   type: Planetary Nebula
 - constellation: Aquila
   dec: +09 14
-  description: SNOWBALL NEBULA
+  description: Snowball Nebula
   mag: 12.4
   name: NGC 6804
   ra: 19 31.6
@@ -104,7 +104,7 @@
   type: Globular Cluster
 - constellation: Aquarius
   dec: -11 22
-  description: SATURN NEBULA
+  description: Saturn Nebula
   mag: 8.3
   name: NGC 7009
   ra: 21 04.2
@@ -136,7 +136,7 @@
   type: Galaxy
 - constellation: Aries
   dec: +19 00
-  description: FIDDLEHEAD GALAXY
+  description: Fiddlehead Galaxy
   mag: 10.3
   name: NGC 772
   ra: 01 59.3
@@ -194,7 +194,7 @@
   dec: +33 25
   description: '1893'
   mag: 7.5
-  name: NGC IC410
+  name: IC410
   ra: 05 22.7
   size: 30.0
   type: Emission Nebula
@@ -258,7 +258,7 @@
   dec: +46 06
   description: PK166+10.1
   mag: 10.0
-  name: NGC IC2149
+  name: IC2149
   ra: 05 56.4
   size: 0.2
   type: Planetary Nebula
@@ -280,13 +280,13 @@
   type: Open Cluster
 - constellation: Auriga
   dec: +41 05
-  description: THE BROKEN HEART CLUSTER
+  description: The Broken Heart Cluster
   mag: 5.4
   name: NGC 2281
   ra: 06 48.3
   size: 25.0
   type: Open Cluster
-- constellation: "Bo\xF6tes"
+- constellation: Boötes
   dec: +08 53
   description: UGC 8616
   mag: 10.3
@@ -294,7 +294,7 @@
   ra: 13 37.5
   size: 5.9
   type: Galaxy
-- constellation: "Bo\xF6tes"
+- constellation: Boötes
   dec: +28 32
   description: ''
   mag: 9.2
@@ -302,7 +302,7 @@
   ra: 14 05.5
   size: 9.0
   type: Globular Cluster
-- constellation: "Bo\xF6tes"
+- constellation: Boötes
   dec: +49 27
   description: UGC 9366
   mag: 11.2
@@ -310,7 +310,7 @@
   ra: 14 32.8
   size: 3.9
   type: Galaxy
-- constellation: "Bo\xF6tes"
+- constellation: Boötes
   dec: +48 44
   description: UGC 9399
   mag: 11.9
@@ -320,7 +320,7 @@
   type: Galaxy
 - constellation: Camelopardalis
   dec: +60 55
-  description: OYSTER NEBULA, The Camel's Eye
+  description: Oyster Nebula, The Camel's Eye
   mag: 12.0
   name: NGC 1501
   ra: 04 07.0
@@ -328,7 +328,7 @@
   type: Planetary Nebula
 - constellation: Camelopardalis
   dec: +62 20
-  description: JOLLY ROGER CLUSTER/GOLDEN HARP CLUSTER
+  description: Jolly Roger Cluster/Golden Harp Cluster
   mag: 6.9
   name: NGC 1502
   ra: 04 07.8
@@ -336,7 +336,7 @@
   type: Open Cluster
 - constellation: Camelopardalis
   dec: +78 21
-  description: 3C120,DUSTY HAND GALAXY
+  description: 3C120, Dusty Hand Galaxy
   mag: 10.6
   name: NGC 2146
   ra: 06 18.6
@@ -376,15 +376,15 @@
   type: Galaxy
 - constellation: Camelopardalis
   dec: +82 34
-  description: THEORITICIAN'S NEBULA,Lemon Slice Neb.,Baby Eskimo
+  description: Theoritician's Nebula, Lemon Slice Neb., Baby Eskimo
   mag: 10.6
-  name: NGC IC3568
+  name: IC3568
   ra: 12 33.1
   size: 0.3
   type: Planetary Nebula
 - constellation: Capricornus
   dec: -23 11
-  description: M30 JELLYFISH CLUSTER
+  description: M30 Jellyfish Cluster
   mag: 6.9
   name: NGC 7099
   ra: 21 40.4
@@ -394,7 +394,7 @@
   dec: +59 18
   description: UGC 192
   mag: 13.3
-  name: NGC IC10
+  name: IC10
   ra: 00 20.4
   size: 6.4
   type: Galaxy
@@ -424,7 +424,7 @@
   type: Open Cluster
 - constellation: Cassiopeia
   dec: +61 46
-  description: SAILBOAT CLUSTER
+  description: Sailboat Cluster
   mag: 7.0
   name: NGC 225
   ra: 00 43.6
@@ -496,7 +496,7 @@
   type: Open Cluster
 - constellation: Cassiopeia
   dec: +61 53
-  description: FUZZY BUTTERFLY
+  description: Fuzzy Butterfly
   mag: 6.5
   name: NGC 654
   ra: 01 44.0
@@ -530,13 +530,13 @@
   dec: +61 27
   description: The Heart Nebula/The Running Dog Nebula/Valentine Nebula
   mag: 6.5
-  name: NGC IC1805
+  name: IC1805
   ra: 02 32.7
   size: 20.0
   type: N+CL
 - constellation: Cassiopeia
   dec: +61 36
-  description: M52 THE SCORPION CLUSTER
+  description: M52 The Scorpion Cluster
   mag: 6.9
   name: NGC 7654
   ra: 23 24.9
@@ -552,7 +552,7 @@
   type: Open Cluster
 - constellation: Cassiopeia
   dec: +61 13
-  description: THE WIDOW'S WEB CLUSTER
+  description: The Widow's Web Cluster
   mag: 8.5
   name: NGC 7790
   ra: 23 58.4
@@ -560,7 +560,7 @@
   type: Open Cluster
 - constellation: Centaurus
   dec: -36 38
-  description: IOTA'S GHOST
+  description: Iota's Ghost
   mag: 9.3
   name: NGC 5102
   ra: 13 22.0
@@ -576,7 +576,7 @@
   type: Planetary Nebula
 - constellation: Cepheus
   dec: +85 14
-  description: POLARISSIMA CLUSTER
+  description: Polarissima Cluster
   mag: 8.1
   name: NGC 188
   ra: 00 47.5
@@ -584,7 +584,7 @@
   type: Open Cluster
 - constellation: Cepheus
   dec: +60 40
-  description: GHOST BUSH CLUSTER/FLYING GEESE CLUSTER
+  description: Ghost Bush Cluster/Flying Geese Cluster
   mag: 7.8
   name: NGC 6939
   ra: 20 31.5
@@ -600,7 +600,7 @@
   type: Galaxy
 - constellation: Cepheus
   dec: +62 36
-  description: THE BRUCE LEE CLUSTER
+  description: The Bruce Lee Cluster
   mag: 6.1
   name: NGC 7160
   ra: 21 53.7
@@ -640,7 +640,7 @@
   type: Open Cluster
 - constellation: Cepheus
   dec: +60 34
-  description: THE DORMOUSE CLUSTER/The Arrowhead cluster
+  description: The Dormouse Cluster/The Arrowhead Cluster
   mag: 7.9
   name: NGC 7510
   ra: 23 11.1
@@ -664,7 +664,7 @@
   type: Galaxy
 - constellation: Cetus
   dec: -11 52
-  description: SKULL NEBULA/The Soap Bubble Nebula/VOODOO MASK
+  description: Skull Nebula/The Soap Bubble Nebula/Voodoo Mask
   mag: 8.5
   name: NGC 246
   ra: 00 47.1
@@ -688,7 +688,7 @@
   type: Galaxy
 - constellation: Cetus
   dec: -06 52
-  description: LITTLE SPINDLE GALAXY
+  description: Little Spindle Galaxy
   mag: 10.4
   name: NGC 584
   ra: 01 31.3
@@ -752,9 +752,9 @@
   type: Galaxy
 - constellation: Canis Major
   dec: -21 23
-  description: colliding w/2207
+  description: Colliding w/2207
   mag: 11.6
-  name: NGC IC2163
+  name: IC2163
   ra: 06 16.5
   size: 3.0
   type: Galaxy
@@ -768,7 +768,7 @@
   type: Galaxy
 - constellation: Canis Major
   dec: -20 46
-  description: M41 LITTLE BEEHIVE CLUSTER
+  description: M41 Little Beehive Cluster
   mag: 4.5
   name: NGC 2287
   ra: 06 46.1
@@ -800,8 +800,7 @@
   type: Open Cluster
 - constellation: Canis Major
   dec: -13 14
-  description: LBN 1041/Thor's Helmet, The Whistle, IC468,DUCK NEB,WHISTLE NEB,HEAD
-    & SHOULDERS NEB.
+  description: LBN 1041/Thor's Helmet, The Whistle, IC468, Duck Neb, Whistle Neb
   mag: 10.0
   name: NGC 2359
   ra: 07 18.5
@@ -809,7 +808,7 @@
   type: Wolf-Rayet Nebula
 - constellation: Canis Major
   dec: -24 57
-  description: Mexican Jumping Star Cluster/PIRATE'S JEWELS,NORTHERN JEWEL BOX,ARKENSTONE,
+  description: Mexican Jumping Star Cluster/Pirate's Jewels, Northern Jewel Box
   mag: 3.8
   name: NGC 2362
   ra: 07 18.7
@@ -825,7 +824,7 @@
   type: Open Cluster
 - constellation: Cancer
   dec: +11 49
-  description: M67 KING COBRA CLUSTER
+  description: M67 King Cobra Cluster
   mag: 6.9
   name: NGC 2682
   ra: 08 51.3
@@ -849,7 +848,7 @@
   type: Galaxy
 - constellation: Coma Berenices
   dec: +14 25
-  description: M99/St.Katherine's Wheel/COMA PINWHEEL
+  description: M99/St.Katherine's Wheel/Coma Pinwheel
   mag: 9.9
   name: NGC 4254
   ra: 12 18.8
@@ -881,7 +880,7 @@
   type: Galaxy
 - constellation: Coma Berenices
   dec: +15 49
-  description: M100 THE MIRROR GALAXY
+  description: M100 The Mirror Galaxy
   mag: 9.4
   name: NGC 4321
   ra: 12 22.9
@@ -937,7 +936,7 @@
   type: Galaxy
 - constellation: Coma Berenices
   dec: +27 58
-  description: UGC 7766/KOI FISH GAL.
+  description: UGC 7766/Koi Fish Galaxy
   mag: 10.0
   name: NGC 4559
   ra: 12 36.0
@@ -945,7 +944,7 @@
   type: Galaxy
 - constellation: Coma Berenices
   dec: +25 59
-  description: THE NEEDLE GALAXY/FLYING SAUCER GALAXY
+  description: The Needle Galaxy/Flying Saucer Galaxy
   mag: 9.6
   name: NGC 4565
   ra: 12 36.3
@@ -961,7 +960,7 @@
   type: Galaxy
 - constellation: Coma Berenices
   dec: +25 30
-  description: UGC 7989 /TI-FIGHTER GAL
+  description: UGC 7989/Ti-Fighter Gal
   mag: 9.4
   name: NGC 4725
   ra: 12 50.4
@@ -969,7 +968,7 @@
   type: Galaxy
 - constellation: Coma Berenices
   dec: +21 41
-  description: M64 BLACK EYE GALAXY/SLEEPING BEAUTY GAL.
+  description: M64 Black Eye Galaxy/Sleeping Beauty Galaxy
   mag: 8.5
   name: NGC 4826
   ra: 12 56.7
@@ -1049,7 +1048,7 @@
   type: Galaxy
 - constellation: Corvus
   dec: -18 52
-  description: Antennae/RINGTAIL GALAXIES/MOSQUITO LARVAE/PUPA/COMMA GALS
+  description: Antennae/Ringtail Galaxies/Mosquito Larvae/Pupa/Comma Gals
   mag: 10.3
   name: NGC 4038
   ra: 12 01.9
@@ -1057,7 +1056,7 @@
   type: Galaxy
 - constellation: Corvus
   dec: -18 53
-  description: Antennae/RINGTAIL GALAXIES/MOSQUITO LARVAE/PUPA/COMMA GALS
+  description: Antennae/Ringtail Galaxies/Mosquito Larvae/Pupa/Comma Gals
   mag: 10.6
   name: NGC 4039
   ra: 12 01.9
@@ -1065,7 +1064,7 @@
   type: Galaxy
 - constellation: Corvus
   dec: -18 47
-  description: ESO 573-PN19 ,LAWN SPRINKLER
+  description: ESO 573-PN19, Lawn Sprinkler
   mag: 10.9
   name: NGC 4361
   ra: 12 24.5
@@ -1105,7 +1104,7 @@
   type: Galaxy
 - constellation: Canes Venatici
   dec: +37 48
-  description: UGC 7322/Silver Needle Galaxy/SHERMAN WAY GAL.
+  description: UGC 7322/Silver Needle Galaxy/Sherman Way Galaxy
   mag: 10.4
   name: NGC 4244
   ra: 12 17.5
@@ -1129,7 +1128,7 @@
   type: Galaxy
 - constellation: Canes Venatici
   dec: +44 06
-  description: UGC 7592/THE BOX GALAXY
+  description: UGC 7592/The Box Galaxy
   mag: 9.6
   name: NGC 4449
   ra: 12 28.2
@@ -1137,7 +1136,7 @@
   type: Galaxy
 - constellation: Canes Venatici
   dec: +41 42
-  description: UGC 7648./COCOON GAL.
+  description: UGC 7648/Cocoon Galaxy
   mag: 11.9
   name: NGC 4485
   ra: 12 30.5
@@ -1145,7 +1144,7 @@
   type: Galaxy
 - constellation: Canes Venatici
   dec: +41 39
-  description: COCOON GALAXY
+  description: Cocoon Galaxy
   mag: 9.8
   name: NGC 4490
   ra: 12 30.6
@@ -1169,7 +1168,7 @@
   type: Galaxy
 - constellation: Canes Venatici
   dec: +32 34
-  description: UGC 7860immediately adjacent to 4631, THE CLUB W/4631/THE PUP
+  description: UGC 7860 immediately adjacent to 4631, The Club W/4631/The Pup
   mag: 12.4
   name: NGC 4627
   ra: 12 42.0
@@ -1177,7 +1176,7 @@
   type: Galaxy
 - constellation: Canes Venatici
   dec: +32 32
-  description: THE WHALE GALAXY
+  description: The Whale Galaxy
   mag: 9.2
   name: NGC 4631
   ra: 12 42.1
@@ -1185,7 +1184,7 @@
   type: Galaxy
 - constellation: Canes Venatici
   dec: +32 10
-  description: HOCKEY STICK GALAXY/FISHHOOK GALAXY
+  description: Hockey Stick Galaxy/Fishhook Galaxy
   mag: 10.5
   name: NGC 4656/4657
   ra: 12 44.0
@@ -1193,7 +1192,7 @@
   type: Galaxy
 - constellation: Canes Venatici
   dec: +41 07
-  description: M94 CROC'S EYE GALAXY
+  description: M94 Croc's Eye Galaxy
   mag: 8.2
   name: NGC 4736
   ra: 12 50.9
@@ -1209,7 +1208,7 @@
   type: Galaxy
 - constellation: Canes Venatici
   dec: +42 02
-  description: M63 SUNFLOWER GALAXY
+  description: M63 Sunflower Galaxy
   mag: 8.6
   name: NGC 5055
   ra: 13 15.8
@@ -1217,7 +1216,7 @@
   type: Galaxy
 - constellation: Canes Venatici
   dec: +47 12
-  description: M51 The Whirlpool galaxy
+  description: M51 The Whirlpool Galaxy
   mag: 8.4
   name: NGC 5194
   ra: 13 29.9
@@ -1241,7 +1240,7 @@
   type: Globular Cluster
 - constellation: Cygnus
   dec: +46 23
-  description: THE SMOKE RING CLUSTER
+  description: The Smoke Ring Cluster
   mag: 6.8
   name: NGC 6811
   ra: 19 37.2
@@ -1249,7 +1248,7 @@
   type: Open Cluster
 - constellation: Cygnus
   dec: +40 11
-  description: OCL155/FOXHEAD NEB
+  description: OCL155/Foxhead Neb
   mag: 7.3
   name: NGC 6819
   ra: 19 41.3
@@ -1273,7 +1272,7 @@
   type: Open Cluster
 - constellation: Cygnus
   dec: +44 09
-  description: KITE CLUSTER
+  description: Kite Cluster
   mag: 7.6
   name: NGC 6866
   ra: 20 03.9
@@ -1283,13 +1282,13 @@
   dec: +34 58
   description: Berkeley 50
   mag: -9999
-  name: NGC IC 1310
+  name: IC 1310
   ra: 20 10.0
   size: 4.0
   type: Open Cluster
 - constellation: Cygnus
   dec: +38 19
-  description: THE CRESCENT NEBULA/THE EAR NEBULA
+  description: The Crescent Nebula/The Ear Nebula
   mag: -9999
   name: NGC 6888
   ra: 20 12.8
@@ -1297,7 +1296,7 @@
   type: Wolf-Rayet Nebula
 - constellation: Cygnus
   dec: +40 47
-  description: THE INCHWORM CLUSTER
+  description: The Inchworm Cluster
   mag: 7.4
   name: NGC 6910
   ra: 20 23.2
@@ -1313,7 +1312,7 @@
   type: Open Cluster
 - constellation: Cygnus
   dec: +31 43
-  description: VEIL NEBULA/THE WITCH BROOM,BRIDALVEIL, ETC
+  description: Veil Nebula/The Witch Broom,Bridalveil
   mag: 7.0
   name: NGC 6992/6995/6960/6979
   ra: 20 56.4
@@ -1321,7 +1320,7 @@
   type: Supernova Remnant
 - constellation: Cygnus
   dec: +54 33
-  description: COAT BUTTON NEBULA (Fetus Nebula)
+  description: Coat Button Nebula (Fetus Nebula)
   mag: 12.0
   name: NGC 7008
   ra: 21 00.5
@@ -1329,7 +1328,7 @@
   type: Planetary Nebula
 - constellation: Cygnus
   dec: +47 51
-  description: CHEESEBURGER NEBULA
+  description: Cheeseburger Nebula
   mag: 12.0
   name: NGC 7026
   ra: 21 06.3
@@ -1337,7 +1336,7 @@
   type: Planetary Nebula
 - constellation: Cygnus
   dec: +42 14
-  description: PINK PILLOW NEBULA/MAGIC CARPET NEB/green rectangle
+  description: Pink Pillow Nebula/Magic Carpet Neb/Green Rectangle
   mag: 9.6
   name: NGC 7027
   ra: 21 07.0
@@ -1385,7 +1384,7 @@
   type: Planetary Nebula
 - constellation: Delphinus
   dec: +20 06
-  description: BLUE FLASH NEBULA
+  description: Blue Flash Nebula
   mag: 12.0
   name: NGC 6905
   ra: 20 22.4
@@ -1409,7 +1408,7 @@
   type: Globular Cluster
 - constellation: Draco
   dec: +55 46
-  description: M102 FOOL'S GOLD GALAXY/THE SPINDLE
+  description: M102 Fool's Gold Galaxy/The Spindle
   mag: 9.9
   name: NGC 5866
   ra: 15 06.5
@@ -1417,7 +1416,7 @@
   type: Galaxy
 - constellation: Draco
   dec: +56 20
-  description: SPLINTER GAL./CAT SCRATCH GAL./KNIFE EDGE GAL.
+  description: Splinter Galaxy/Cat Scratch Galaxy/Knife Edge Galaxy
   mag: 10.3
   name: NGC 5907
   ra: 15 15.9
@@ -1441,7 +1440,7 @@
   type: Galaxy
 - constellation: Draco
   dec: +70 09
-  description: LOST IN SPACE GALAXY
+  description: Lost In Space Galaxy
   mag: 10.2
   name: NGC 6503
   ra: 17 49.5
@@ -1449,7 +1448,7 @@
   type: Galaxy
 - constellation: Draco
   dec: +66 38
-  description: CATSEYE NEBULA
+  description: Catseye Nebula
   mag: 8.3
   name: NGC 6543
   ra: 17 58.6
@@ -1481,7 +1480,7 @@
   type: Galaxy
 - constellation: Eridanus
   dec: -20 35
-  description: EYE OF GOD GALAXY
+  description: Eye Of God Galaxy
   mag: 9.9
   name: NGC 1232
   ra: 03 09.8
@@ -1569,7 +1568,7 @@
   type: Galaxy
 - constellation: Eridanus
   dec: -12 44
-  description: CLEOPATRA'S EYE, THE ESKIMO'S WIFE
+  description: Cleopatra's Eye, The Eskimo's Wife
   mag: 10.4
   name: NGC 1535
   ra: 04 14.3
@@ -1577,7 +1576,7 @@
   type: Planetary Nebula
 - constellation: Fornax
   dec: -37 12
-  description: FORNAX A elliptical
+  description: Fornax A Elliptical
   mag: 8.2
   name: NGC 1316
   ra: 03 22.7
@@ -1585,7 +1584,7 @@
   type: Galaxy
 - constellation: Fornax
   dec: -25 52
-  description: COMET PLANETARY
+  description: Comet Planetary
   mag: 9.4
   name: NGC 1360
   ra: 03 33.2
@@ -1673,7 +1672,7 @@
   type: Open Cluster
 - constellation: Gemini
   dec: +29 29
-  description: THE ANT NEB.,DOUBLE BUBBLE NEB.,PEANUT NEB.,Dogbone Neb.
+  description: The Ant Neb.,Double Bubble Neb.,Peanut Neb.,Dogbone Neb.
   mag: 13.0
   name: NGC 2371/2372
   ra: 07 25.6
@@ -1681,7 +1680,7 @@
   type: Planetary Nebula
 - constellation: Gemini
   dec: +20 55
-  description: PK197+17.1/Clown face Nebula/Eskimo Nebula
+  description: PK197+17.1/Clown Face Nebula/Eskimo Nebula
   mag: 8.6
   name: NGC 2392
   ra: 07 29.2
@@ -1689,7 +1688,7 @@
   type: Planetary Nebula
 - constellation: Gemini
   dec: +21 34
-  description: TWINKLING COMET CLUSTER
+  description: Twinkling Comet Cluster
   mag: 8.3
   name: NGC 2420
   ra: 07 38.4
@@ -1697,15 +1696,15 @@
   type: Open Cluster
 - constellation: Hercules
   dec: +12 04
-  description: WHITE-EYED PEA NEBULA
+  description: White-Eyed Pea Nebula
   mag: 11.0
-  name: NGC IC4593
+  name: IC4593
   ra: 16 11.7
   size: 0.21
   type: Planetary Nebula
 - constellation: Hercules
   dec: +36 28
-  description: M13 HERCULES CLUST.(DARK LANES=THE PROPELLOR
+  description: M13 Hercules Clust. Dark Lanes The Propellor
   mag: 5.8
   name: NGC 6205
   ra: 16 41.7
@@ -1721,7 +1720,7 @@
   type: Galaxy
 - constellation: Hercules
   dec: +23 48
-  description: TURTLE NEBULA
+  description: Turtle Nebula
   mag: 9.7
   name: NGC 6210
   ra: 16 44.5
@@ -1777,7 +1776,7 @@
   type: Galaxy
 - constellation: Hydra
   dec: -18 39
-  description: THE GHOST OF JUPITER/The CBS Eye/DIAMOND NEB.
+  description: The Ghost Of Jupiter/The Cbs Eye/Diamond Neb.
   mag: 8.6
   name: NGC 3242
   ra: 10 24.8
@@ -1785,7 +1784,7 @@
   type: Planetary Nebula
 - constellation: Hydra
   dec: -32 49
-  description: FRAME GALAXY
+  description: Frame Galaxy
   mag: 8.5
   name: NGC 3621
   ra: 11 18.3
@@ -1801,7 +1800,7 @@
   type: Globular Cluster
 - constellation: Hydra
   dec: -29 52
-  description: M83 SEASHELL GALAXY, SOUTHERN PINWHEEL
+  description: M83 Seashell Galaxy, Southern Pinwheel
   mag: 7.5
   name: NGC 5236
   ra: 13 37.0
@@ -1809,7 +1808,7 @@
   type: Galaxy
 - constellation: Lacerta
   dec: +46 29
-  description: THE STAR LIZARD CLUSTER/drunken lizard cluster
+  description: The Star Lizard Cluster/Drunken Lizard Cluster
   mag: 7.7
   name: NGC 7209
   ra: 22 05.1
@@ -1819,7 +1818,7 @@
   dec: +52 50
   description: Collinder 445
   mag: 9.0
-  name: NGC IC1434
+  name: IC1434
   ra: 22 10.5
   size: 7.0
   type: Open Cluster
@@ -1937,7 +1936,7 @@
   type: Galaxy
 - constellation: Leo
   dec: +13 35
-  description: KING HAMLET'S GHOST/The Trio in Leo,HOTDOG GAL
+  description: King Hamlet's Ghost/The Trio In Leo,Hotdog Gal
   mag: 9.5
   name: NGC 3628
   ra: 11 20.3
@@ -1953,9 +1952,9 @@
   type: Globular Cluster
 - constellation: Lepus
   dec: -12 42
-  description: SPIROGRAPH NEBULA, RASPBERRY NEBULA
+  description: Spirograph Nebula, Raspberry Nebula
   mag: 10.7
-  name: NGC IC418
+  name: IC418
   ra: 05 27.5
   size: 0.23
   type: Planetary Nebula
@@ -1969,7 +1968,7 @@
   type: Galaxy
 - constellation: Libra
   dec: -21 01
-  description: GHOST GLOBULAR
+  description: Ghost Globular
   mag: 8.5
   name: NGC 5897
   ra: 15 17.4
@@ -1985,7 +1984,7 @@
   type: Galaxy
 - constellation: Leo Minor
   dec: +24 55
-  description: SLICED ONION GALAXY
+  description: Sliced Onion Galaxy
   mag: 9.9
   name: NGC 3344
   ra: 10 43.5
@@ -1993,7 +1992,7 @@
   type: Galaxy
 - constellation: Leo Minor
   dec: +36 37
-  description: THE KNITTING NEEDLE GALAXY
+  description: The Knitting Needle Galaxy
   mag: 11.3
   name: NGC 3432
   ra: 10 52.5
@@ -2009,7 +2008,7 @@
   type: Globular Cluster
 - constellation: Lynx
   dec: +38 53
-  description: THE INTERGALACTIC WANDERER
+  description: The Intergalactic Wanderer
   mag: 10.3
   name: NGC 2419
   ra: 07 38.1
@@ -2025,7 +2024,7 @@
   type: Galaxy
 - constellation: Lynx
   dec: +33 25
-  description: UFO GALAXY
+  description: Ufo Galaxy
   mag: 9.8
   name: NGC 2683
   ra: 08 52.7
@@ -2033,7 +2032,7 @@
   type: Galaxy
 - constellation: Lyra
   dec: +33 02
-  description: M57 RING NEBULA
+  description: M57 Ring Nebula
   mag: 9.4
   name: NGC 6720
   ra: 18 53.6
@@ -2057,7 +2056,7 @@
   type: Open Cluster
 - constellation: Monoceros
   dec: -09 38
-  description: 2226=ctr of cluster
+  description: NGC 2226
   mag: -9999
   name: NGC 2225
   ra: 06 26.6
@@ -2081,9 +2080,9 @@
   type: Emission Nebula
 - constellation: Monoceros
   dec: +04 51
-  description: cluster in the Rosette
+  description: Cluster In The Rosette
   mag: 4.8
-  name: NGC 2244 CLUSTER IN ROS.
+  name: NGC 2244
   ra: 06 32.3
   size: 30.0
   type: Open Cluster
@@ -2113,7 +2112,7 @@
   type: Open Cluster
 - constellation: Monoceros
   dec: +08 45
-  description: HUBBLE'S VARIABLE NEBULA
+  description: Hubble's Variable Nebula
   mag: -9999
   name: NGC 2261
   ra: 06 39.2
@@ -2121,7 +2120,7 @@
   type: Variable Nebula
 - constellation: Monoceros
   dec: +09 54
-  description: CHRISTMAS TREE CLUSTER/CONE NEBULA
+  description: Christmas Tree Cluster/Cone Nebula
   mag: 4.1
   name: NGC 2264
   ra: 06 41.0
@@ -2129,7 +2128,7 @@
   type: N+CL
 - constellation: Monoceros
   dec: +04 37
-  description: OCL524,Z95,HEAD HUNTER,STARFIGHTER
+  description: OCL524,Z95,Head Hunter,Starfighter
   mag: 10.0
   name: NGC 2269
   ra: 06 43.3
@@ -2145,7 +2144,7 @@
   type: Open Cluster
 - constellation: Monoceros
   dec: +00 28
-  description: HAGRID'S DRAGON
+  description: Hagrid's Dragon
   mag: 6.0
   name: NGC 2301
   ra: 06 51.8
@@ -2193,7 +2192,7 @@
   type: Open Cluster
 - constellation: Ophiucus
   dec: -13 03
-  description: M107, THE CRUCIFIX CLUSTER
+  description: M107, The Crucifix Cluster
   mag: 7.8
   name: NGC 6171
   ra: 16 32.5
@@ -2217,7 +2216,7 @@
   type: Globular Cluster
 - constellation: Ophiucus
   dec: -30 07
-  description: M62 FLICKERING GLOBULAR
+  description: M62 Flickering Globular
   mag: 6.4
   name: NGC 6266
   ra: 17 01.2
@@ -2241,7 +2240,7 @@
   type: Globular Cluster
 - constellation: Ophiucus
   dec: -12 55
-  description: The Box Nebula, THE SHOEPRINT NEB.,the exclamation mark!
+  description: The Box Nebula, The Shoeprint Neb.,The Exclamation Mark
   mag: 11.6
   name: NGC 6309
   ra: 17 14.1
@@ -2273,7 +2272,7 @@
   type: Globular Cluster
 - constellation: Ophiucus
   dec: -23 46
-  description: LITTLE GHOST NEBULA
+  description: Little Ghost Nebula
   mag: 11.0
   name: NGC 6369
   ra: 17 29.3
@@ -2291,13 +2290,13 @@
   dec: +05 43
   description: Poseidon'd Trident
   mag: 4.2
-  name: NGC IC4665
+  name: IC4665
   ra: 17 46.2
   size: 70.0
   type: Open Cluster
 - constellation: Ophiucus
   dec: +06 51
-  description: EMERALD EYE PLANETARY, BLUE RACQUETBALL
+  description: Emerald Eye Planetary, Blue Racquetball
   mag: 8.0
   name: NGC 6572
   ra: 18 12.1
@@ -2313,7 +2312,7 @@
   type: Open Cluster
 - constellation: Orion
   dec: -04 44
-  description: MERMAID'S PURSE NEBULA/RUNNING MAN NEBULA
+  description: Mermaid's Purse Nebula/Running Man Nebula
   mag: 7.0
   name: NGC 1973/1975(NEBULA)
   ra: 05 35.1
@@ -2321,7 +2320,7 @@
   type: Emission Nebula
 - constellation: Orion
   dec: -04 26
-  description: COAL CAR CLUSTER-JUST N. OF 1973/5/7
+  description: Coal Car Cluster-Just N. Of 1973/5/7
   mag: 4.2
   name: NGC 1981
   ra: 05 35.2
@@ -2329,7 +2328,7 @@
   type: Open Cluster
 - constellation: Orion
   dec: -05 23
-  description: M42 ORION NEBULA
+  description: M42 Orion Nebula
   mag: 4.0
   name: NGC 1976
   ra: 05 35.3
@@ -2337,7 +2336,7 @@
   type: N+CL
 - constellation: Orion
   dec: -04 49
-  description: CLUSTER IN NGC1973/1975
+  description: Cluster In Ngc1973/1975
   mag: 7.0
   name: NGC 1977(CLUSTER)
   ra: 05 35.3
@@ -2345,7 +2344,7 @@
   type: N+CL
 - constellation: Orion
   dec: -05 55
-  description: The Lost Jewel of Orion=CLUSTER WITH NEBULA
+  description: The Lost Jewel of Orion
   mag: 2.5
   name: NGC 1980
   ra: 05 35.4
@@ -2361,7 +2360,7 @@
   type: Emission Nebula
 - constellation: Orion
   dec: -06 42
-  description: 13TH PEARL NEBULA, BLACK EYE NEBULA
+  description: 13th Pearl Nebula, Black Eye Nebula
   mag: 9.2
   name: NGC 1999
   ra: 05 36.5
@@ -2369,7 +2368,7 @@
   type: Reflection Nebula
 - constellation: Orion
   dec: -01 51
-  description: LIPS NEBULA/FLAME NEBULA/MAPLE LEAF NEB./TANK NEB.
+  description: Lips Nebula/Flame Nebula/Maple Leaf Neb./Tank Neb.
   mag: -9999
   name: NGC 2024
   ra: 05 41.7
@@ -2377,7 +2376,7 @@
   type: Emission Nebula
 - constellation: Orion
   dec: +09 05
-  description: KISSING CRESCENTS NEBULA, ORION'S COLLARBONE NEB.
+  description: Kissing Crescents Nebula, Orion's Collarbone Neb.
   mag: 11.6
   name: NGC 2022
   ra: 05 42.1
@@ -2385,7 +2384,7 @@
   type: Planetary Nebula
 - constellation: Orion
   dec: +00 05
-  description: M78 CASPER THE FRIENDLY GHOST
+  description: M78 Casper The Friendly Ghost
   mag: 8.0
   name: NGC 2068
   ra: 05 46.8
@@ -2401,7 +2400,7 @@
   type: Open Cluster
 - constellation: Orion
   dec: +13 58
-  description: SHOPPING CART CLUSTER/"37" Cluster
+  description: Shopping Cart Cluster/"37" Cluster
   mag: 5.9
   name: NGC 2169
   ra: 06 08.4
@@ -2417,7 +2416,7 @@
   type: Open Cluster
 - constellation: Pegasus
   dec: +16 09
-  description: UGC 8 THE LITTLE SOMBRERO, ELECTRIC ARC GAL.
+  description: UGC 8 The Little Sombrero, Electric Arc Galaxy
   mag: 11.0
   name: NGC 7814
   ra: 00 03.2
@@ -2425,7 +2424,7 @@
   type: Galaxy
 - constellation: Pegasus
   dec: +12 10
-  description: M15 PEGASUS CLUSTER
+  description: M15 Pegasus Cluster
   mag: 6.3
   name: NGC 7078
   ra: 21 30.0
@@ -2449,7 +2448,7 @@
   type: Galaxy
 - constellation: Perseus
   dec: +51 35
-  description: M76 LITTLE DUMBBELL, the Barbell, The Cork
+  description: M76 Little Dumbbell, The Barbell, The Cork
   mag: 11.0
   name: NGC 650/651
   ra: 01 42.3
@@ -2457,7 +2456,7 @@
   type: Planetary Nebula
 - constellation: Perseus
   dec: +57 08
-  description: PERSEUS DOUBLE CLUSTER
+  description: Perseus Double Cluster
   mag: 5.3
   name: NGC 869
   ra: 02 19.1
@@ -2465,7 +2464,7 @@
   type: Open Cluster
 - constellation: Perseus
   dec: +57 08
-  description: PERSEUS DOUBLE CLUSTER
+  description: Perseus Double Cluster
   mag: 6.1
   name: NGC 884
   ra: 02 22.1
@@ -2481,7 +2480,7 @@
   type: Galaxy
 - constellation: Perseus
   dec: +39 04
-  description: UGC 2154, PERSEUS LENTICULAR
+  description: UGC 2154, Perseus Lenticular
   mag: 9.4
   name: NGC 1023
   ra: 02 40.4
@@ -2505,7 +2504,7 @@
   type: Galaxy
 - constellation: Perseus
   dec: +47 14
-  description: PATRICK STARFISH
+  description: Patrick Starfish
   mag: 8.4
   name: NGC 1245
   ra: 03 14.7
@@ -2513,7 +2512,7 @@
   type: Open Cluster
 - constellation: Perseus
   dec: +31 25
-  description: EMBRYO NEBULA
+  description: Embryo Nebula
   mag: 5.7
   name: NGC 1333
   ra: 03 29.3
@@ -2521,7 +2520,7 @@
   type: Reflection Nebula
 - constellation: Perseus
   dec: +37 22
-  description: STINGRAY CLUSTER
+  description: Stingray Cluster
   mag: 6.7
   name: NGC 1342
   ra: 03 31.7
@@ -2537,7 +2536,7 @@
   type: Open Cluster
 - constellation: Perseus
   dec: +51 19
-  description: FOSSIL FOOTPRINT NEBULA
+  description: Fossil Footprint Nebula
   mag: -9999
   name: NGC 1491
   ra: 04 03.2
@@ -2561,7 +2560,7 @@
   type: Open Cluster
 - constellation: Perseus
   dec: +35 17
-  description: THE NORTHERN TRIFID
+  description: The Northern Trifid
   mag: -9999
   name: NGC 1579
   ra: 04 30.2
@@ -2603,7 +2602,7 @@
   dec: -33 45
   description: ESO 406-34
   mag: 11.6
-  name: NGC IC5271
+  name: IC5271
   ra: 22 58.0
   size: 2.6
   type: Galaxy
@@ -2617,7 +2616,7 @@
   type: Galaxy
 - constellation: Pisces
   dec: +05 15
-  description: Whirligig galaxy
+  description: Whirligig Galaxy
   mag: 10.3
   name: NGC 488
   ra: 01 21.8
@@ -2625,7 +2624,7 @@
   type: Galaxy
 - constellation: Pisces
   dec: +15 47
-  description: M74 PHANTOM GALAXY
+  description: M74 Phantom Galaxy
   mag: 9.4
   name: NGC 628
   ra: 01 36.7
@@ -2705,7 +2704,7 @@
   type: Planetary Nebula
 - constellation: Puppis
   dec: -18 13
-  description: ALBINO BUTTERFLY NEBULA,BURNING EMBER,BAT NEB.
+  description: Albino Butterfly Nebula,Burning Ember,Bat Neb.
   mag: 11.5
   name: NGC 2440
   ra: 07 41.9
@@ -2721,7 +2720,7 @@
   type: Open Cluster
 - constellation: Puppis
   dec: -37 57
-  description: STINGING SCORPION CLUSTER
+  description: Stinging Scorpion Cluster
   mag: 2.8
   name: NGC 2451
   ra: 07 45.4
@@ -2745,7 +2744,7 @@
   type: Open Cluster
 - constellation: Puppis
   dec: -38 32
-  description: TERMITE HOLE CLUSTER
+  description: Termite Hole Cluster
   mag: 5.8
   name: NGC 2477
   ra: 07 52.2
@@ -2753,8 +2752,7 @@
   type: Open Cluster
 - constellation: Puppis
   dec: -26 24
-  description: OC HAFFNER 18 & 19 WITHIN THE NEB.,CHAINED BROOCH NEB.,SKULL & CROSSBONES
-    NEB.
+  description: Chained Brooch Neb., Skull & Crossbones Neb.
   mag: 8.0
   name: NGC 2467
   ra: 07 52.5
@@ -2794,7 +2792,7 @@
   type: Open Cluster
 - constellation: Puppis
   dec: -12 49
-  description: THE DISH CLUSTER
+  description: The Dish Cluster
   mag: 6.5
   name: NGC 2539
   ra: 08 10.6
@@ -2802,7 +2800,7 @@
   type: Open Cluster
 - constellation: Puppis
   dec: -37 37
-  description: HEART&DAGGER CLUSTER
+  description: Heart&Dagger Cluster
   mag: 6.3
   name: NGC 2546
   ra: 08 12.4
@@ -2834,7 +2832,7 @@
   type: Galaxy
 - constellation: Sculptor
   dec: -33 15
-  description: GIANT SQUID GALAXY
+  description: Giant Squid Galaxy
   mag: 10.0
   name: NGC 134
   ra: 00 30.4
@@ -2842,7 +2840,7 @@
   type: Galaxy
 - constellation: Sculptor
   dec: -25 18
-  description: ESO 474-29/Sculptor Galaxy/SILVER COIN GAL.
+  description: ESO 474-29/Sculptor Galaxy/Silver Coin Galaxy
   mag: 7.2
   name: NGC 253
   ra: 00 47.6
@@ -2866,7 +2864,7 @@
   type: Galaxy
 - constellation: Sculptor
   dec: -32 36
-  description: BOND'S GALAXY
+  description: Bond's Galaxy
   mag: 9.1
   name: NGC 7793
   ra: 23 57.8
@@ -2882,7 +2880,7 @@
   type: Globular Cluster
 - constellation: Scorpius
   dec: -26 32
-  description: M4 CRAB OR SPIDER GLOBULAR
+  description: M4 Crab Or Spider Globular
   mag: 5.4
   name: NGC 6121
   ra: 16 23.6
@@ -2906,7 +2904,7 @@
   type: Open Cluster
 - constellation: Scorpius
   dec: -37 53
-  description: MOTH WING CLUSTER
+  description: Moth Wing Cluster
   mag: 5.4
   name: NGC 6281
   ra: 17 04.8
@@ -2914,7 +2912,7 @@
   type: Open Cluster
 - constellation: Scorpius
   dec: -37 06
-  description: BUG NEBULA/BUTTERFLY NEB.
+  description: Bug Nebula/Butterfly Neb.
   mag: 9.6
   name: NGC 6302
   ra: 17 13.7
@@ -2922,7 +2920,7 @@
   type: Planetary Nebula
 - constellation: Scorpius
   dec: -32 35
-  description: '6374'
+  description: NGC 6374
   mag: 5.5
   name: NGC 6383
   ra: 17 34.7
@@ -2938,7 +2936,7 @@
   type: Open Cluster
 - constellation: Scorpius
   dec: -36 58
-  description: PHANTOM CLUSTER
+  description: Phantom Cluster
   mag: 8.8
   name: NGC 6400
   ra: 17 40.2
@@ -2946,7 +2944,7 @@
   type: Open Cluster
 - constellation: Scorpius
   dec: -32 15
-  description: M6 BUTTERFLY CLUSTER
+  description: M6 Butterfly Cluster
   mag: 4.2
   name: NGC 6405
   ra: 17 40.3
@@ -2962,7 +2960,7 @@
   type: Open Cluster
 - constellation: Scorpius
   dec: -37 03
-  description: SILVER NUGGET CLUSTER
+  description: Silver Nugget Cluster
   mag: 7.2
   name: NGC 6441
   ra: 17 50.2
@@ -2986,7 +2984,7 @@
   type: Open Cluster
 - constellation: Scutum
   dec: -08 11
-  description: SANTA'S SLEIGH CLUSTER
+  description: Santa's Sleigh Cluster
   mag: 7.8
   name: NGC 6664
   ra: 18 36.5
@@ -3002,7 +3000,7 @@
   type: Open Cluster
 - constellation: Scutum
   dec: -06 16
-  description: M11 WILD DUCK CLUSTER
+  description: M11 Wild Duck Cluster
   mag: 5.8
   name: NGC 6705
   ra: 18 51.1
@@ -3018,7 +3016,7 @@
   type: Globular Cluster
 - constellation: Serpens
   dec: +02 05
-  description: M5 ROSE CLUSTER
+  description: M5 Rose Cluster
   mag: 5.8
   name: NGC 5904
   ra: 15 18.6
@@ -3042,7 +3040,7 @@
   type: Open Cluster
 - constellation: Serpens
   dec: -13 47
-  description: M16 EAGLE NEBULA--the cluster
+  description: M16 Eagle Nebula--The Cluster
   mag: 6.0
   name: NGC 6611
   ra: 18 18.8
@@ -3050,23 +3048,23 @@
   type: Open Cluster
 - constellation: Serpens
   dec: -13 50
-  description: M16 EAGLE NEBULA--the nebula/Star Queen Nebula
+  description: M16 Eagle Nebula--The Nebula/Star Queen Nebula
   mag: -9999
-  name: NGC IC4703(BN)
+  name: IC4703(BN)
   ra: 18 18.8
   size: 28.0
   type: BN+OC
 - constellation: Serpens
   dec: +05 26
-  description: TWEEDLEDEE CLUSTER
+  description: Tweedledee Cluster
   mag: 4.6
-  name: NGC IC4756
+  name: IC4756
   ra: 18 38.9
   size: 40.0
   type: Open Cluster
 - constellation: Sextans
   dec: -07 43
-  description: MCG - 1-26- 18 SPINDLE GAL.
+  description: MCG - 1-26- 18 Spindle Galaxy
   mag: 8.9
   name: NGC 3115
   ra: 10 05.2
@@ -3082,7 +3080,7 @@
   type: Open Cluster
 - constellation: Sagitta
   dec: +18 47
-  description: M71 ANGELFISH CLUSTER (ARROWHEAD)
+  description: M71 Angelfish Cluster (Arrowhead)
   mag: 8.4
   name: NGC 6838
   ra: 19 53.8
@@ -3098,7 +3096,7 @@
   type: Globular Cluster
 - constellation: Sagittarius
   dec: -20 01
-  description: BOX NEBULA (in same field as 6440)/COFFIN NEB.
+  description: Box Nebula (In Same Field As 6440)/Coffin Neb.
   mag: 13.0
   name: NGC 6445
   ra: 17 49.3
@@ -3122,7 +3120,7 @@
   type: Open Cluster
 - constellation: Sagittarius
   dec: -23 01
-  description: M20 TRIFID NEBULA
+  description: M20 Trifid Nebula
   mag: 6.3
   name: NGC 6514
   ra: 18 02.5
@@ -3130,7 +3128,7 @@
   type: N+CL
 - constellation: Sagittarius
   dec: -27 52
-  description: Forms a pairing with NGC6520 open cluster, INKSPOT NEB.
+  description: Forms A Pairing With NGC6520 Open Cluster, Inkspot Neb.
   mag: -9999
   name: NGC B86
   ra: 18 03.0
@@ -3138,7 +3136,7 @@
   type: DN
 - constellation: Sagittarius
   dec: -27 53
-  description: DEAD MAN'S CHEST CLUSTER, NEXT TO B86
+  description: Dead Man's Chest Cluster, Next To B86
   mag: 7.6
   name: NGC 6520
   ra: 18 03.4
@@ -3162,7 +3160,7 @@
   type: Open Cluster
 - constellation: Sagittarius
   dec: -24 23
-  description: M8 LAGOON NEBULA (Cluster = 6530)
+  description: M8 Lagoon Nebula (Cluster = 6530)
   mag: 4.6
   name: NGC 6523
   ra: 18 04.4
@@ -3170,7 +3168,7 @@
   type: Emission Nebula
 - constellation: Sagittarius
   dec: -24 21
-  description: OCL19in Lagoon Nebula(6523)
+  description: OCL19 in Lagoon Nebula(6523)
   mag: 4.6
   name: NGC 6530
   ra: 18 04.5
@@ -3194,7 +3192,7 @@
   type: Globular Cluster
 - constellation: Sagittarius
   dec: -25 00
-  description: STARFISH CLUSTER
+  description: Starfish Cluster
   mag: 7.5
   name: NGC 6544
   ra: 18 07.3
@@ -3218,7 +3216,7 @@
   type: Globular Cluster
 - constellation: Sagittarius
   dec: -33 52
-  description: THE SOUTHERN RING NEBULA
+  description: The Southern Ring Nebula
   mag: 13.0
   name: NGC 6563
   ra: 18 12.0
@@ -3226,7 +3224,7 @@
   type: Planetary Nebula
 - constellation: Sagittarius
   dec: -18 14
-  description: on northside of M24
+  description: On Northside Of M24
   mag: -9999
   name: NGC B92
   ra: 18 15.6
@@ -3234,7 +3232,7 @@
   type: DN
 - constellation: Sagittarius
   dec: -18 04
-  description: on northside of M24
+  description: On Northside Of M24
   mag: -9999
   name: NGC B93
   ra: 18 16.9
@@ -3250,7 +3248,7 @@
   type: Open Cluster
 - constellation: Sagittarius
   dec: -17 06
-  description: M18 BLACK SWAN CLUSTER
+  description: M18 Black Swan Cluster
   mag: 6.9
   name: NGC 6613
   ra: 18 20.0
@@ -3258,7 +3256,7 @@
   type: Open Cluster
 - constellation: Sagittarius
   dec: -16 11
-  description: M17 SWAN NEB./OMEGA NEBULA/CHECKMARK NEB.
+  description: M17 Swan Neb./Omega Nebula/Checkmark Neb.
   mag: 6.0
   name: NGC 6618
   ra: 18 21.1
@@ -3308,7 +3306,7 @@
   dec: -19 07
   description: M25
   mag: 4.6
-  name: NGC IC4725
+  name: IC4725
   ra: 18 31.8
   size: 26.0
   type: Open Cluster
@@ -3330,7 +3328,7 @@
   type: Open Cluster
 - constellation: Sagittarius
   dec: -23 54
-  description: M22 GREAT SAGITTARIUS CLUSTER
+  description: M22 Great Sagittarius Cluster
   mag: 5.2
   name: NGC 6656
   ra: 18 36.4
@@ -3348,7 +3346,7 @@
   dec: -33 21
   description: PK2-13.1
   mag: 12.5
-  name: NGC IC4776
+  name: IC4776
   ra: 18 45.8
   size: 0.13
   type: Planetary Nebula
@@ -3370,7 +3368,7 @@
   type: Globular Cluster
 - constellation: Sagittarius
   dec: -36 38
-  description: Dunlop 573/CHANDELIER CLUSTER
+  description: Dunlop 573/Chandelier Cluster
   mag: 6.8
   name: NGC 6723
   ra: 18 59.6
@@ -3378,7 +3376,7 @@
   type: Globular Cluster
 - constellation: Sagittarius
   dec: -30 58
-  description: M55 SPECTER CLUSTER
+  description: M55 Specter Cluster
   mag: 6.3
   name: NGC 6809
   ra: 19 40.0
@@ -3386,7 +3384,7 @@
   type: Globular Cluster
 - constellation: Sagittarius
   dec: -14 09
-  description: LITTLE GEM NEBULA
+  description: Little Gem Nebula
   mag: 10.0
   name: NGC 6818
   ra: 19 44.0
@@ -3410,7 +3408,7 @@
   type: Globular Cluster
 - constellation: Taurus
   dec: +23 46
-  description: CED19Iin Pleiades=MEROPE NEB./TEMPEL'S NEBULA
+  description: CED19I in Pleiades=Merope Neb./Tempel's Nebula
   mag: -9999
   name: NGC 1435
   ra: 03 46.2
@@ -3420,13 +3418,13 @@
   dec: +23 56
   description: Van den Bergh 22in Pleiades
   mag: -9999
-  name: NGC IC349
+  name: IC349
   ra: 03 46.3
   size: 30.0
   type: Reflection Nebula
 - constellation: Taurus
   dec: +30 47
-  description: The PANSY or CRYSTAL BALL NEBULA
+  description: The Pansy Or Crystal Ball Nebula
   mag: 10.8
   name: NGC 1514
   ra: 04 09.3
@@ -3434,7 +3432,7 @@
   type: Planetary Nebula
 - constellation: Taurus
   dec: +19 32
-  description: Hind's Variable Nebula, STRUVE'S LOST NEBULA
+  description: Hind's Variable Nebula, Struve's Lost Nebula
   mag: -9999
   name: NGC 1554/1555
   ra: 04 21.9
@@ -3442,7 +3440,7 @@
   type: Variable Nebula
 - constellation: Taurus
   dec: +19 07
-  description: PIRATE MOON CLUSTER
+  description: Pirate Moon Cluster
   mag: 6.4
   name: NGC 1647
   ra: 04 45.7
@@ -3458,7 +3456,7 @@
   type: Open Cluster
 - constellation: Taurus
   dec: +16 41
-  description: POOR MAN'S DOUBLE CLUSTER
+  description: Poor Man's Double Cluster
   mag: 7.7
   name: NGC 1817
   ra: 05 12.5
@@ -3466,7 +3464,7 @@
   type: Open Cluster
 - constellation: Taurus
   dec: +22 01
-  description: M1 CRAB NEBULA
+  description: M1 Crab Nebula
   mag: 8.4
   name: NGC 1952
   ra: 05 34.5
@@ -3474,7 +3472,7 @@
   type: Supernova Remnant
 - constellation: Triangulum
   dec: +30 39
-  description: M33 TRIANGULUM GALAXY
+  description: M33 Triangulum Galaxy
   mag: 5.7
   name: NGC 598
   ra: 01 33.9
@@ -3562,7 +3560,7 @@
   type: Galaxy
 - constellation: Ursa Major
   dec: +50 59
-  description: TIGER'S EYE GALAXY
+  description: Tiger's Eye Galaxy
   mag: 9.2
   name: NGC 2841
   ra: 09 22.0
@@ -3570,7 +3568,7 @@
   type: Galaxy
 - constellation: Ursa Major
   dec: +69 04
-  description: M81 BODE'S NEBULA
+  description: M81 Bode's Nebula
   mag: 6.9
   name: NGC 3031
   ra: 09 55.6
@@ -3578,7 +3576,7 @@
   type: Galaxy
 - constellation: Ursa Major
   dec: +69 41
-  description: M82 CIGAR GALAXY
+  description: M82 Cigar Galaxy
   mag: 8.4
   name: NGC 3034
   ra: 09 55.9
@@ -3586,7 +3584,7 @@
   type: Galaxy
 - constellation: Ursa Major
   dec: +55 41
-  description: UGC 5387THE PHANTOM FRISBEE
+  description: UGC 5387 The Phantom Frisbee
   mag: 10.9
   name: NGC 3079
   ra: 10 02.0
@@ -3594,7 +3592,7 @@
   type: Galaxy
 - constellation: Ursa Major
   dec: +68 44
-  description: UGC 5398 THE GARLAND GAL.
+  description: UGC 5398 The Garland Galaxy
   mag: 9.9
   name: NGC 3077
   ra: 10 03.3
@@ -3602,7 +3600,7 @@
   type: Galaxy
 - constellation: Ursa Major
   dec: +41 25
-  description: LITTLE PINWHEEL GALAXY
+  description: Little Pinwheel Galaxy
   mag: 9.8
   name: NGC 3184
   ra: 10 18.3
@@ -3618,7 +3616,7 @@
   type: Galaxy
 - constellation: Ursa Major
   dec: +55 01
-  description: M97 OWL NEBULA
+  description: M97 Owl Nebula
   mag: 11.0
   name: NGC 3587
   ra: 11 14.8
@@ -3722,7 +3720,7 @@
   type: Galaxy
 - constellation: Ursa Major
   dec: +61 36
-  description: FABERGE EGG GALAXY
+  description: Faberge Egg Galaxy
   mag: 10.9
   name: NGC 4605
   ra: 12 40.0
@@ -3730,7 +3728,7 @@
   type: Galaxy
 - constellation: Ursa Major
   dec: +54 21
-  description: M101 PINWHEEL GALAXY
+  description: M101 Pinwheel Galaxy
   mag: 7.9
   name: NGC 5457
   ra: 14 03.2
@@ -3738,7 +3736,7 @@
   type: Galaxy
 - constellation: Virgo
   dec: +13 09
-  description: SILVER STREAK GALAXY
+  description: Silver Streak Galaxy
   mag: 10.0
   name: NGC 4216
   ra: 12 15.9
@@ -3746,7 +3744,7 @@
   type: Galaxy
 - constellation: Virgo
   dec: +04 28
-  description: M61 SWELLING SPIRAL
+  description: M61 Swelling Spiral
   mag: 9.6
   name: NGC 4303
   ra: 12 21.9
@@ -3770,7 +3768,7 @@
   type: Galaxy
 - constellation: Virgo
   dec: +13 05
-  description: UGC 7575/The "Eyes" , COPELAND'S EYES
+  description: UGC 7575/The "Eyes", Copeland's Eyes
   mag: 10.8
   name: NGC 4435
   ra: 12 27.7
@@ -3778,7 +3776,7 @@
   type: Galaxy
 - constellation: Virgo
   dec: +13 00
-  description: UGC 7574/The "Eyes" , COPELAND'S EYES
+  description: UGC 7574/The "Eyes", Copeland's Eyes
   mag: 10.2
   name: NGC 4438
   ra: 12 27.8
@@ -3810,7 +3808,7 @@
   type: Galaxy
 - constellation: Virgo
   dec: +07 42
-  description: HAIRY EYEBROW GALAXY
+  description: Hairy Eyebrow Galaxy
   mag: 9.7
   name: NGC 4526
   ra: 12 34.0
@@ -3842,7 +3840,7 @@
   type: Galaxy
 - constellation: Virgo
   dec: +11 15
-  description: UGC 7777/The Siamese Twins/FISH& CHIPS GALS.
+  description: UGC 7777/The Siamese Twins/Fish&Chips Galaxies
   mag: 11.3
   name: NGC 4567
   ra: 12 36.5
@@ -3850,7 +3848,7 @@
   type: Galaxy
 - constellation: Virgo
   dec: +11 14
-  description: UGC 7777/The Siamese Twins/FISH& CHIPS GALS.
+  description: UGC 7777/The Siamese Twins/Fish&Chips Galaxies
   mag: 10.8
   name: NGC 4568
   ra: 12 36.6
@@ -3874,7 +3872,7 @@
   type: Galaxy
 - constellation: Virgo
   dec: -11 37
-  description: M104 SOMBRERO GALAXY
+  description: M104 Sombrero Galaxy
   mag: 8.0
   name: NGC 4594
   ra: 12 40.0
@@ -3906,7 +3904,7 @@
   type: Galaxy
 - constellation: Virgo
   dec: -08 40
-  description: VINYL LP GALAXY
+  description: Vinyl Lp Galaxy
   mag: 9.5
   name: NGC 4699
   ra: 12 49.0
@@ -3914,7 +3912,7 @@
   type: Galaxy
 - constellation: Virgo
   dec: -16 38
-  description: MCG - 3-34- 39
+  description: MCG-3-34-39
   mag: 10.9
   name: NGC 5054
   ra: 13 17.0
@@ -3946,7 +3944,7 @@
   type: Globular Cluster
 - constellation: Virgo
   dec: +01 57
-  description: BLADE&PEARL GALAXY, The Mini Sombrero
+  description: Blade&Pearl Galaxy, The Mini Sombrero
   mag: 10.3
   name: NGC 5746
   ra: 14 44.9
@@ -3970,7 +3968,7 @@
   type: Open Cluster
 - constellation: Vulpecula
   dec: +23 17
-  description: LBN135w/6823 cluster
+  description: LBN135w/6823 Cluster
   mag: 15.0
   name: NGC 6820
   ra: 19 43.1
@@ -3994,7 +3992,7 @@
   type: Open Cluster
 - constellation: Vulpecula
   dec: +22 43
-  description: M27 DUMBBELL NEBULA
+  description: M27 Dumbbell Nebula
   mag: 7.3
   name: NGC 6853
   ra: 19 59.6
@@ -4010,7 +4008,7 @@
   type: Open Cluster
 - constellation: Vulpecula
   dec: +28 17
-  description: MOTHRA CLUSTER
+  description: Mothra Cluster
   mag: 6.3
   name: NGC 6940
   ra: 20 34.5

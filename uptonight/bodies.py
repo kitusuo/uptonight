@@ -24,7 +24,7 @@ class UpTonightBodies:
     """UpTonight Bodies"""
 
     # Load Skyfield data
-    _load = Loader("~/skyfield-data")
+    _load = Loader("./skyfield-data")
     _ts = _load.timescale()
 
     # Load ephemeris data for comet orbit propagation

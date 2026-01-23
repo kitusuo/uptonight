@@ -33,7 +33,6 @@ from uptonight.report import Report
 from uptonight.sunmoon import SunMoon
 from uptonight.targets import Targets
 
-download_IERS_A()
 
 # CDS Name Resolver:
 # https://cds.unistra.fr/cgi-bin/Sesame
@@ -183,6 +182,9 @@ class UpTonight:
         Returns:
             None
         """
+        download_IERS_A()
+        _LOGGER.info("IERS loadad")
+
         self._location = location
         self._features = features
         self._colors = colors

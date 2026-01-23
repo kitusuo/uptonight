@@ -33,7 +33,7 @@ class UpTonightComets:
         _comets_data = mpc.load_comets_dataframe(f)
 
     # Load Skyfield data
-    _load = Loader("~/skyfield-data")
+    _load = Loader("./skyfield-data")
     _ts = _load.timescale()
 
     # Load ephemeris data for comet orbit propagation
@@ -58,6 +58,8 @@ class UpTonightComets:
         self._observation_timeframe = observation_timeframe
         self._constraints = constraints
         self._magnitude_limit = magnitude_limit
+
+        _LOGGER.info(f"Comets URL: {mpc.COMET_URL}")
 
         _LOGGER.info(f"Comets loaded: {len(self._comets_data)}")
 

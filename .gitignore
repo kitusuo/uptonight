@@ -191,7 +191,6 @@ runv.sh
 config.yaml
 CometEls.txt
 comets.txt
-de421.bsp
 
 targets/NGCObjects.csv
 targets/*.py
