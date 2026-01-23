@@ -94,6 +94,7 @@ OpenIC | The Index Catalogue (IC) based on [OpenNGC](https://github.com/mattiave
 OpenNGC | The New General Catalogue (NGC) based on [OpenNGC](https://github.com/mattiaverga/OpenNGC) | 8373
 LDN | Lynds Catalog of Dark Nebulae based on [NASA](https://heasarc.gsfc.nasa.gov/W3Browse/nebula-catalog/ldn.html) | 1802
 LBN | Lynds Catalog of Bright Nebulae based on [NASA](https://heasarc.gsfc.nasa.gov/W3Browse/nebula-catalog/lbn.html) | 1116
+Pensack500 | Don Pensack's list of the 500 best DSOs based on [CN](https://www.cloudynights.com/forums/topic/472872-500-best-dso-list) | 500
 
 ### Solar System Bodies
 
