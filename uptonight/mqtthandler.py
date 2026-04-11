@@ -176,16 +176,16 @@ class MQTTDeviceHandler:
             _LOGGER.debug(f"Published MQTT Config for a {self._device_type}")
 
         if self._device_type in (DEVICE_TYPE_CAMERA) and _type == FEATURE_OBJECTS:
-            # If the device is a camera we create a camera entity configuration
-            root_topic = "homeassistant/" + "camera" + "/"
+            # If the device is a camera we create an image entity configuration
+            root_topic = "homeassistant/" + "image" + "/"
             topic = "uptonight/" + _observatory + "_" + _type + "_" + _catalogue + "/"
             config = {
                 "name": f"{self._catalogue} {self._device_functions[0][SENSOR_NAME]}",
-                "topic": topic + "screen",
+                "image_topic": topic + "screen",
                 "availability_topic": topic + "lwt",
                 "payload_available": "ON",
                 "payload_not_available": "OFF",
-                "unique_id": self._device_type + "_" + _observatory + "_" + _type + "_" + _catalogue,
+                "unique_id": "image" + "_" + _observatory + "_" + _type + "_" + _catalogue,
                 "device": {
                     "identifiers": [self._type],
                     "name": f"UpTonight {self._observatory} {self._type}",
@@ -195,7 +195,7 @@ class MQTTDeviceHandler:
             }
             self._mqttclient.publish(root_topic + topic + "config", json.dumps(config), qos=0, retain=True)
             _LOGGER.debug("Published MQTT Camera Config for a %s", self._device_type)
-
+            
     def publish_device(self, message) -> None:
         """Publish device to mqtt, handle passage if device is mower"""
 
