@@ -196,3 +196,7 @@ targets/NGCObjects.csv
 targets/*.py
 targets/*.md
 targets/*.csv
+targets/Pensack500.json
+tools/dark_nights.py
+tools/lunar_eclipse.py
+tools/query-simbad.py
