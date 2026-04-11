@@ -213,7 +213,7 @@ The plot and the report will be located in the `./out`-diretory.
 
 > ***Note:*** Running UpTonight as a container is my preferred way of using it.
 
-***Docer Compose:*** Alternative example for docker-compose, here writing to the `www`-directory of Home Assistant and using my published image on Docker Hub:
+***Docker Compose:*** Alternative example for docker-compose, here writing to the `www`-directory of Home Assistant and using my published image on Docker Hub:
 
 ```yaml
 services:
@@ -453,10 +453,8 @@ Camera (Plot) for GaryImm:
 ```yaml
 show_state: false
 show_name: false
-camera_view: live
 type: picture-entity
-entity: camera.uptonight_backyard_objects_garyimm_plot
-camera_image: camera.uptonight_backyard_objects_garyimm_plot
+entity: image.uptonight_backyard_objects_garyimm_plot
 aspect_ratio: 1.5:1
 tap_action:
   action: fire-dom-event
@@ -467,12 +465,10 @@ tap_action:
       size: wide
       content:
         type: picture-entity
-        entity: camera.uptonight_backyard_objects_garyimm_plot
-        camera_image: camera.uptonight_backyard_objects_garyimm_plot
+        entity: image.uptonight_backyard_objects_garyimm_plot
         aspect_ratio: 1.5:1
         show_state: true
         show_name: false
-        camera_view: live
 ```
 
 Sensor (Report):
@@ -481,21 +477,34 @@ Sensor (Report):
 type: markdown
 content: >
   {%- if states('sensor.uptonight_backyard_objects_garyimm')|is_number %}
+
   {%- for item in state_attr("sensor.uptonight_backyard_objects_garyimm",
-  "objects") %}
+  "objects") or [] %}
+
   <table><tr>
+
   {%- set astrobin = '%22' + item.id | regex_replace('\s', '%20') + '%22' %}
+
   {%- set alttime = item.id | regex_replace('\s', '-') | lower %}
+
   {{ loop.index }}: <a href="https://astrobin.com/search/?q={{ astrobin }}">{{
   item["target name"] }}</a><br>{{ item.type }} in {{ item.constellation }},
+
   <a href="https://astrobin.com/search/?q={{ astrobin
   }}&d=i&subject=&telescope=&camera=&integration_time_min=0&integration_time_max=16&telescope_focal_length_min=600&telescope_focal_length_max=850&color_or_mono=C&telescope_diameter_min=100&telescope_diameter_max=130&sort=-likes">Esprit</a>,
-  <a href="http://192.168.1.129:8123/local/uptonight-garyimm/uptonight-alttime-{{
+
+  <a
+  href="http://192.168.1.129:8123/local/uptonight-garyimm/uptonight-alttime-{{
   alttime }}.png" target="_blank" rel="noopener noreferrer">Graph</a>
+
   </tr></table>
+
   {%- endfor %}
+
   {%- else %}
+
   Waiting for UpTonight
+
   {%- endif %}
 ```
 
@@ -503,29 +512,33 @@ Below a more advanced variant (which I am using) with support for Dropdown List 
 
 ```yaml
 type: markdown
-content: >
+content: >-
   {%- if states('sensor.uptonight_backyard_objects_garyimm')|is_number %}
   {%- for item in state_attr("sensor.uptonight_backyard_objects_garyimm",
-  "objects") %}
-  {%- if item.size >= states('input_select.uptonight_filter_min_size')|float %}
-  {%- if states('input_select.uptonight_filter_type') == "All" or item.type is
-  search(states('input_select.uptonight_filter_type'), ignorecase=True) %}
-  {%- if item.mag <= states('input_select.uptonight_filter_max_magnitude')|float
-  %}
-  {%- if item.foto >= states('input_select.uptonight_filter_min_foto')|float %}
+  "objects") or [] %}
+
+  {%- if item.size >= states('input_select.uptonight_filter_min_size')|float
+      and (states('input_select.uptonight_filter_type') == "All" or item.type is search(states('input_select.uptonight_filter_type'), ignorecase=True))
+      and item.mag <= states('input_select.uptonight_filter_max_magnitude')|float 
+      and item.foto >= states('input_select.uptonight_filter_min_foto')|float %}
   <table><tr>
+
   {%- set astrobin = '%22' + item.id | regex_replace('\s', '%20') + '%22' %}
+
   {%- set alttime = item.id | regex_replace('\s', '-') | lower %}
+
   {{ loop.index }}: <a href="https://astrobin.com/search/?q={{ astrobin }}">{{
   item["target name"] }}</a><br>{{ item.type }} in {{ item.constellation }},
+
   <a href="https://astrobin.com/search/?q={{ astrobin
   }}&d=i&subject=&telescope=&camera=&integration_time_min=0&integration_time_max=16&telescope_focal_length_min=600&telescope_focal_length_max=850&color_or_mono=C&telescope_diameter_min=100&telescope_diameter_max=130&sort=-likes">Esprit</a>,
-  <a href="http://192.168.1.129:8123/local/uptonight-garyimm/uptonight-alttime-{{
+
+  <a
+  href="http://192.168.1.129:8123/local/uptonight-garyimm/uptonight-alttime-{{
   alttime }}.png" target="_blank" rel="noopener noreferrer">Graph</a>
+
   </tr></table>
-  {%- endif %}
-  {%- endif %}
-  {%- endif %}
+
   {%- endif %}
   {%- endfor %}
   {%- else %}
