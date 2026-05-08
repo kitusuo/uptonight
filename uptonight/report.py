@@ -32,10 +32,10 @@ class Report:
         """Init reports
 
         Args:
-            observer (Observer): The astroplan opbserver
+            observer (Observer): The astroplan observer
             astronight_from (str): Observation start time
             astronight_to (str): Observation end time
-            constraints (dict): Observing contraints
+            constraints (dict): Observing constraints
             sun_moon (SunMoon): Sun and Moon helper
             output_dir (str): Output directory
             current_day (Time): Day for calculation
@@ -54,8 +54,6 @@ class Report:
         self._target_list = target_list
         self._plot = plot
 
-        return None
-
     def save_mqtt(self, mqtt_service, uptonight_result, result_type, output_datestamp):
         """Save report as mqtt
 
@@ -73,8 +71,9 @@ class Report:
                 _LOGGER.error(f"MQTT Connection error: {cre}")
                 time.sleep(3)
 
+        result_for_mqtt = uptonight_result.copy()
         if result_type == FEATURE_OBJECTS:
-            uptonight_result.remove_columns(
+            result_for_mqtt.remove_columns(
                 [
                     "hmsdms",
                     "right ascension",
@@ -84,7 +83,7 @@ class Report:
                 ]
             )
         if result_type == FEATURE_BODIES:
-            uptonight_result.remove_columns(
+            result_for_mqtt.remove_columns(
                 [
                     "hmsdms",
                     "right ascension",
@@ -92,7 +91,7 @@ class Report:
                 ]
             )
         if result_type == FEATURE_COMETS:
-            uptonight_result.remove_columns(
+            result_for_mqtt.remove_columns(
                 [
                     "hmsdms",
                     "absolute magnitude",
@@ -117,7 +116,7 @@ class Report:
             else:
                 moon_separation = self._constraints["moon_separation_min"]
 
-            uptonight_table = json.loads(uptonight_result.to_pandas().to_json(orient="records"))
+            uptonight_table = json.loads(result_for_mqtt.to_pandas().to_json(orient="records"))
             data = {
                 "target_list": target_list,
                 "observatory": self._observer.name,
@@ -264,7 +263,7 @@ class Report:
         contents.insert(13, "\n")
         contents.insert(
             14,
-            f"Contraints: Altitude constraint minimum: {self._constraints['altitude_constraint_min']}°, maximum: {self._constraints['altitude_constraint_max']}°, "
+            f"Constraints: Altitude constraint minimum: {self._constraints['altitude_constraint_min']}°, maximum: {self._constraints['altitude_constraint_max']}°, "
             + f"Airmass constraint: {self._constraints['airmass_constraint']}, Moon separation constraint: {moon_separation:.0f}°, "
             + f"Size constraint minimum: {self._constraints['size_constraint_min']}', maximum: {self._constraints['size_constraint_max']}'",
         )

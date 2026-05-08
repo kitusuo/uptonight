@@ -23,13 +23,6 @@ _LOGGER = logging.getLogger(__name__)
 class UpTonightBodies:
     """UpTonight Bodies"""
 
-    # Load Skyfield data
-    _load = Loader("./skyfield-data")
-    _ts = _load.timescale()
-
-    # Load ephemeris data for comet orbit propagation
-    _eph = _load("de421.bsp")
-
     _eph_map = {
         "mercury": "mercury",
         "venus": "venus",
@@ -40,8 +33,6 @@ class UpTonightBodies:
         "neptune": "neptune barycenter",
     }
 
-    _earth = _eph["earth"]
-
     def __init__(
         self,
         observer,
@@ -51,13 +42,19 @@ class UpTonightBodies:
         """Init bodies
 
         Args:
-            observer (Observer): The astroplan opbserver
-            observation_timeframe (dict): Oberserving time ranges
-            constraints (dict): Observing contraints
+            observer (Observer): The astroplan observer
+            observation_timeframe (dict): Observing time ranges
+            constraints (dict): Observing constraints
         """
         self._observer = observer
         self._observation_timeframe = observation_timeframe
         self._constraints = constraints
+
+        # Load Skyfield data
+        _sf_load = Loader("./skyfield-data")
+        self._ts = _sf_load.timescale()
+        self._eph = _sf_load("de421.bsp")
+        self._earth = self._eph["earth"]
 
         location_dec = SkyCoord(
             lat=self._observer.latitude,
@@ -85,7 +82,7 @@ class UpTonightBodies:
             uptonight_bodies (Table): Result table for bodies.
             ax (Axes): An Axes object (ax) with a map of the sky.
         """
-        # For the comets, we're using the timespan in between civil darkness
+        # For the bodies, we're using the full astronomical darkness timespan
         time_resolution = 1 * u.minute
         time_grid = time_grid_from_range(
             [
@@ -102,25 +99,6 @@ class UpTonightBodies:
         observability_constraints = [
             AltitudeConstraint(0 * u.deg, 90 * u.deg),
         ]
-
-        # for name, planet_label, color, size, jplid in BODIES:
-        #     observable = is_observable(
-        #         observability_constraints,
-        #         self._observer,
-        #         get_body(planet_label, self._observation_timeframe["time_range"]),
-        #         time_range=self._observation_timeframe["time_range"],
-        #     )
-        #     if True in observable:
-        #         _LOGGER.debug(f"{planet_label.capitalize()} is observable")
-        #         object_body = get_body(planet_label, time_grid)
-        #         object_altaz = object_body.transform_to(object_frame)
-        #         ax = plot_sky(
-        #             object_altaz,
-        #             self._observer,
-        #             time_grid,
-        #             style_kwargs=dict(color=color, label=name, linewidth=3, alpha=0.5, s=size),
-        #             north_to_east_ccw=self._constraints["north_to_east_ccw"],
-        #         )
 
         _LOGGER.debug("Creating result table of bodies")
         for name, planet_label, color, size, jplid in BODIES:
@@ -283,6 +261,7 @@ class UpTonightBodies:
             azimuth = body_altaz.az
         else:
             if meridian_transit_time > self._observation_timeframe["observing_end_time"]:
+                # Transit is after end of night: body is rising, check whether it's in the eastern sky
                 object_body = get_body(planet_label, self._observation_timeframe["observing_start_time"])
                 object_altaz = AltAz(
                     obstime=self._observation_timeframe["observing_start_time"],
@@ -306,6 +285,21 @@ class UpTonightBodies:
                             self._observation_timeframe["observing_end_time"]
                         ).strftime("%m/%d/%Y %H:%M:%S")
                     )
+                max_altitude = body_altaz.alt
+                azimuth = body_altaz.az
+            else:
+                # Transit was before night started: body is descending, max altitude is at start of night
+                object_body = get_body(planet_label, self._observation_timeframe["observing_start_time"])
+                object_altaz = AltAz(
+                    obstime=self._observation_timeframe["observing_start_time"],
+                    location=self._observer.location,
+                )
+                body_altaz = object_body.transform_to(object_altaz)
+                max_altitude_time = str(
+                    self._observer.astropy_time_to_datetime(
+                        self._observation_timeframe["observing_start_time"]
+                    ).strftime("%m/%d/%Y %H:%M:%S")
+                )
                 max_altitude = body_altaz.alt
                 azimuth = body_altaz.az
 

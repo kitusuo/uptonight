@@ -2,6 +2,7 @@ import logging
 from datetime import datetime, timedelta
 
 import numpy as np
+import pandas as pd
 from astroplan import (
     FixedTarget,
     time_grid_from_range,
@@ -27,40 +28,39 @@ _LOGGER = logging.getLogger(__name__)
 class UpTonightComets:
     """UpTonight Comets"""
 
-    # Load comet data
-    # with load.open(mpc.COMET_URL, reload=True) as f:
-    with load.open(mpc.COMET_URL) as f:
-        _comets_data = mpc.load_comets_dataframe(f)
-
-    # Load Skyfield data
-    _load = Loader("./skyfield-data")
-    _ts = _load.timescale()
-
-    # Load ephemeris data for comet orbit propagation
-    _eph = _load("de421.bsp")
-
     def __init__(
         self,
         observer,
         observation_timeframe,
         constraints,
+        output_dir=".",
         magnitude_limit=DEFAULT_MAGNITUDE_LIMIT,
     ):
         """Init comets
 
         Args:
-            observer (Observer): The astroplan opbserver
-            observation_timeframe (dict): Oberserving time ranges
-            constraints (dict): Observing contraints
+            observer (Observer): The astroplan observer
+            observation_timeframe (dict): Observing time ranges
+            constraints (dict): Observing constraints
+            output_dir (str): Output directory
             magnitude_limit (float): Magnitude limit
         """
         self._observer = observer
         self._observation_timeframe = observation_timeframe
         self._constraints = constraints
+        self._output_dir = output_dir
         self._magnitude_limit = magnitude_limit
 
-        _LOGGER.info(f"Comets URL: {mpc.COMET_URL}")
+        # Load comet data
+        with load.open(mpc.COMET_URL) as f:
+            self._comets_data = mpc.load_comets_dataframe(f)
 
+        # Load Skyfield data
+        _sf_load = Loader("./skyfield-data")
+        self._ts = _sf_load.timescale()
+        self._eph = _sf_load("de421.bsp")
+
+        _LOGGER.info(f"Comets URL: {mpc.COMET_URL}")
         _LOGGER.info(f"Comets loaded: {len(self._comets_data)}")
 
         # Convert observers location to decimal
@@ -102,44 +102,27 @@ class UpTonightComets:
             uptonight_comets (Table): Result table for comets.
             ax (Axes): An Axes object (ax) with a map of the sky.
         """
-        # Compute comets positions and distances
+        # Single pass: compute all positional and distance data
+        _LOGGER.debug(f"Computing positions for {len(self._comets_data)} comets")
+        ephemeris = self._comets_data.apply(self._compute_comet_ephemeris, axis=1)
+        self._comets_data[["distance_au_earth", "distance_au_sun", "ra", "dec", "alt", "az"]] = ephemeris
 
-        _LOGGER.debug(f"Compute the distance to Earth for {len(self._comets_data)} comets")
-        self._comets_data["distance_au_earth"] = self._comets_data.apply(
-            self._get_comet_position_and_distance_earth, axis=1
-        )
-        _LOGGER.debug(f"Compute the distance to Sun for {len(self._comets_data)} comets")
-        self._comets_data["distance_au_sun"] = self._comets_data.apply(
-            self._get_comet_position_and_distance_sun, axis=1
-        )
-
-        # Function to compute visual magnitude
-        # Apply the function to compute visual magnitude for each comet and
-        # limit comets visiul magnitude to some reasonable value
+        # Compute visual magnitudes and filter by magnitude limit
         _LOGGER.debug(
-            f"Compute the visual magnitudes for {len(self._comets_data)} comets (magnitude limit: {self._magnitude_limit})"
+            f"Computing visual magnitudes for {len(self._comets_data)} comets (magnitude limit: {self._magnitude_limit})"
         )
         self._comets_data["visual_magnitude"] = self._comets_data.apply(self._compute_visual_magnitude, axis=1)
         self._comets_data = self._comets_data.loc[self._comets_data["visual_magnitude"] < self._magnitude_limit]
 
         if len(self._comets_data) > 0:
-            # Compute coordinates for comets
-            _LOGGER.debug(f"Compute the coordinates for {len(self._comets_data)} comets")
-            observable_comets = self._comets_data
-            self._comets_data["alt"] = self._comets_data.apply(self._comet_alt, axis=1)
-            self._comets_data["az"] = self._comets_data.apply(self._comet_az, axis=1)
-            self._comets_data["ra"] = self._comets_data.apply(self._comet_ra, axis=1)
-            self._comets_data["dec"] = self._comets_data.apply(self._comet_dec, axis=1)
+            observable_comets = self._comets_data.sort_values(by=["visual_magnitude"]).copy()
 
-            # Sort comets by visual magnitude
-            observable_comets = observable_comets.sort_values(by=["visual_magnitude"])
-
-            # Calculate rise and set times for the comets
-            _LOGGER.debug(f"Compute the rise and set times for {len(observable_comets)} comets")
+            # Single pass: compute rise and set times
+            _LOGGER.debug(f"Computing rise/set times for {len(observable_comets)} comets")
             self._start_time = self._observation_time - timedelta(hours=12)
             self._end_time = self._observation_time + timedelta(hours=12)
-            observable_comets["rise_time"] = observable_comets.apply(self._compute_rise_time, axis=1)
-            observable_comets["set_time"] = observable_comets.apply(self._compute_set_time, axis=1)
+            rise_set = observable_comets.apply(self._compute_rise_set_time, axis=1)
+            observable_comets[["rise_time", "set_time"]] = rise_set
             observable_comets["is_observable"] = observable_comets.apply(self._comet_observable, axis=1)
             observable_comets = observable_comets[observable_comets["is_observable"]]
             observable_comets_no = len(observable_comets)
@@ -152,7 +135,7 @@ class UpTonightComets:
                     f"The visually brightest comet is {brightest_comet['designation']} with a magnitude of {brightest_comet['visual_magnitude']:.2f}."
                 )
 
-                with open("comets.txt", "w") as f:
+                with open(f"{self._output_dir}/comets.txt", "w") as f:
                     f.write(observable_comets.to_string(header=True, index=False))
 
                 observable_comets_selected = observable_comets[
@@ -241,132 +224,34 @@ class UpTonightComets:
 
         return uptonight_comets, ax
 
-    def _get_comet_position_and_distance_earth(self, comet):
-        """Calculate comets distance to Earth
+    def _compute_comet_ephemeris(self, comet):
+        """Compute all positional and distance data for one comet in a single orbit propagation pass.
 
-        Args:
-            comet (row): Row of comet
-
-        Returns:
-            distance (AU): Distance in astronomical unit
+        Returns a pandas Series with distance_au_earth, distance_au_sun, ra (hours),
+        dec (degrees), alt (degrees), az (degrees).
         """
-        comet_orbit = self._sun + mpc.comet_orbit(comet, self._ts, GM_SUN)
+        comet_helio = mpc.comet_orbit(comet, self._ts, GM_SUN)
+        comet_orbit = self._sun + comet_helio
 
-        # Calculate comet position at the observation time
-        ra, dec, distance = self._earth.at(self._observation_time).observe(comet_orbit).radec()
+        distance_sun = comet_helio.at(self._observation_time).distance().au
+        ra, dec, distance_earth = self._earth.at(self._observation_time).observe(comet_orbit).radec()
+        alt, az, _ = self._observer_location.at(self._observation_time).observe(comet_orbit).apparent().altaz()
 
-        return distance.au
-
-    def _get_comet_position_and_distance_sun(self, comet):
-        """Calculate comets distance to Sun
-
-        Args:
-            comet (row): Row of comet
-
-        Returns:
-            distance (AU): Distance in astronomical unit
-        """
-        comet_orbit = mpc.comet_orbit(comet, self._ts, GM_SUN)
-
-        # Calculate comet position at the observation time
-        distance = comet_orbit.at(self._observation_time).distance()
-
-        return distance.au
-
-    def _comet_ra(self, comet):
-        """Calculate comets ra
-
-        Args:
-            comet (row): Row of comet
-
-        Returns:
-            ra (hours): Ra
-        """
-        comet_orbit = self._sun + mpc.comet_orbit(comet, self._ts, GM_SUN)
-
-        # Calculate comet position at the observation time
-        ra, dec, distance = self._earth.at(self._observation_time).observe(comet_orbit).radec()
-
-        return ra.hours
-
-    def _comet_dec(self, comet):
-        """Calculate comets dec
-
-        Args:
-            comet (row): Row of comet
-
-        Returns:
-            dec (degrees): Dec
-        """
-        comet_orbit = self._sun + mpc.comet_orbit(comet, self._ts, GM_SUN)
-
-        # Calculate comet position at the observation time
-        ra, dec, distance = self._earth.at(self._observation_time).observe(comet_orbit).radec()
-
-        return dec.degrees
-
-    def _compute_visual_magnitude(self, comet):
-        """Calculate comets visual magnitude
-
-        Args:
-            comet (row): Row of comet
-
-        Returns:
-            visual_magnitude (float): Visual magnitude
-        """
-        absolute_mag = comet["magnitude_g"]  # Absolute magnitude
-        slope_param = comet["magnitude_k"]  # Slope parameter
-        heliocentric_dist = comet["distance_au_sun"]  # Distance from the Sun in AU
-        geocentric_dist = comet["distance_au_earth"]  # Distance from the Earth in AU
-
-        visual_magnitude = (
-            absolute_mag + 5 * np.log10(heliocentric_dist) + 2.5 * slope_param * np.log10(geocentric_dist)
+        return pd.Series(
+            {
+                "distance_au_earth": distance_earth.au,
+                "distance_au_sun": distance_sun,
+                "ra": ra.hours,
+                "dec": dec.degrees,
+                "alt": alt.degrees,
+                "az": az.degrees,
+            }
         )
 
-        return visual_magnitude
+    def _compute_rise_set_time(self, comet):
+        """Compute rise and set times for a comet in a single find_discrete call.
 
-    def _comet_alt(self, comet):
-        """Calculate comets alt
-
-        Args:
-            comet (row): Row of comet
-
-        Returns:
-            alt (degrees): Altitude
-        """
-        comet_orbit = self._sun + mpc.comet_orbit(comet, self._ts, GM_SUN)
-
-        # Calculate altitude and azimuth for the comet
-        alt, az, distance = self._observer_location.at(self._observation_time).observe(comet_orbit).apparent().altaz()
-
-        # Return altitude
-        return alt.degrees
-
-    def _comet_az(self, comet):
-        """Calculate comets azimuth
-
-        Args:
-            comet (row): Row of comet
-
-        Returns:
-            az (degrees): Azimuth
-        """
-        comet_orbit = self._sun + mpc.comet_orbit(comet, self._ts, GM_SUN)
-
-        # Calculate altitude and azimuth for the comet
-        alt, az, distance = self._observer_location.at(self._observation_time).observe(comet_orbit).apparent().altaz()
-
-        # Return azimuth
-        return az.degrees
-
-    def _compute_rise_time(self, comet):
-        """Calculate comets rise time
-
-        Args:
-            comet (row): Row of comet
-
-        Returns:
-            rise_time (datetime): Rise time, None if comet does not rise
+        Returns a pandas Series with rise_time and set_time (datetime or None each).
         """
         comet_orbit = self._sun + mpc.comet_orbit(comet, self._ts, GM_SUN)
 
@@ -374,59 +259,37 @@ class UpTonightComets:
             self._start_time, self._end_time, risings_and_settings(self._eph, comet_orbit, self._topos)
         )
 
-        # Filter out rise and set events
-        # rise_times = t[y == 1]
-        # set_times = t[y == 0]
-
-        rise_time, set_time = None, None
-        for time, event in zip(t, y):
-            event_time = time.utc_datetime()
-            if event == 1:  # Rising event
-                rise_time = event_time
-            elif event == 0:  # Setting event
-                set_time = event_time
-
-        if type(rise_time) is datetime:
-            return rise_time.replace(tzinfo=None).replace(microsecond=0)
-        return None
-
-    def _compute_set_time(self, comet):
-        """Calculate comets set time
-
-        Args:
-            comet (row): Row of comet
-
-        Returns:
-            set_time (datetime): Set time, None if comet does not rise
-        """
-        comet_orbit = self._sun + mpc.comet_orbit(comet, self._ts, GM_SUN)
-
-        t, y = find_discrete(
-            self._start_time, self._end_time, risings_and_settings(self._eph, comet_orbit, self._topos)
-        )
-
-        # Filter out rise and set events
         rise_times = t[y == 1]
         set_times = t[y == 0]
 
-        # Ensure that set_time is after rise_time
-        if set_times < rise_times:
+        # If set comes before rise in our window, extend forward to catch the next set
+        if len(rise_times) > 0 and len(set_times) > 0 and set_times[0].tt < rise_times[0].tt:
             _start_time = self._observation_time + timedelta(hours=12)
             _end_time = self._observation_time + timedelta(hours=36)
             t, y = find_discrete(_start_time, _end_time, risings_and_settings(self._eph, comet_orbit, self._topos))
-            # set_times = t[y == 0]
 
         rise_time, set_time = None, None
         for time, event in zip(t, y):
             event_time = time.utc_datetime()
-            if event == 1:  # Rising event
+            if event == 1:
                 rise_time = event_time
-            elif event == 0:  # Setting event
+            elif event == 0:
                 set_time = event_time
 
-        if type(set_time) is datetime:
-            return set_time.replace(tzinfo=None).replace(microsecond=0)
-        return None
+        if isinstance(rise_time, datetime):
+            rise_time = rise_time.replace(tzinfo=None).replace(microsecond=0)
+        if isinstance(set_time, datetime):
+            set_time = set_time.replace(tzinfo=None).replace(microsecond=0)
+
+        return pd.Series({"rise_time": rise_time, "set_time": set_time})
+
+    def _compute_visual_magnitude(self, comet):
+        """Calculate visual magnitude using the standard comet magnitude formula."""
+        return (
+            comet["magnitude_g"]
+            + 5 * np.log10(comet["distance_au_sun"])
+            + 2.5 * comet["magnitude_k"] * np.log10(comet["distance_au_earth"])
+        )
 
     def _comet_observable(self, comet):
         """Test if comet is observable during the civil darkness

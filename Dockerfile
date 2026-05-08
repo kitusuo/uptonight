@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3-pip python3-venv python3-dev pkg-config libhdf5-dev build-essential gcc && \
+    apt-get install -y --no-install-recommends python3-pip python3-venv python3-dev pkg-config libhdf5-dev build-essential gcc gfortran && \
     cd /usr/local/bin && \
     ln -s /usr/bin/python3 python && \
     python3 --version && \
@@ -17,7 +17,7 @@ COPY requirements.txt requirements.txt
 
 RUN python3 -m venv venv && \
     venv/bin/pip install --no-cache-dir -r requirements.txt && \
-    pip list
+    venv/bin/pip list
 
 RUN venv/bin/pip install pyinstaller
 

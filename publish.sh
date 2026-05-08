@@ -28,15 +28,19 @@ if [[ "${VERSION}" == "dev" ]]; then
     printf '%s\n' "Building development version"
     docker buildx build --progress=plain \
         -t mawinkler/uptonight:${VERSION} \
-        --platform linux/amd64 \
+        --platform linux/amd64,linux/arm64/v8 \
         --push -f Dockerfile .
     docker pull mawinkler/uptonight:dev
-    docker run --rm -v ./config.yaml:/app/config.yaml -v ./outdev:/app/out mawinkler/uptonight:dev
+    docker run --rm -v ./config.yaml:/app/config.yaml -v ./out:/app/out mawinkler/uptonight:dev
 else
     printf '%s\n' "Building public version"
     docker buildx build \
         -t mawinkler/uptonight:${VERSION} \
         -t mawinkler/uptonight:latest \
-        --platform linux/amd64,linux/arm64/v8 \
+        --platform linux/amd64 \
         --push .
+    docker pull mawinkler/uptonight:${VERSION}
+    docker run --rm -v ./config.yaml:/app/config.yaml -v ./out:/app/out mawinkler/uptonight:${VERSION}
+
+        # --platform linux/amd64,linux/arm64/v8 \
 fi

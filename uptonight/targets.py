@@ -22,17 +22,17 @@ class Targets:
     def __init__(
         self,
         target_list=None,
-        custom_targets=[],
+        custom_targets=None,
         target=None,
     ):
+        if custom_targets is None:
+            custom_targets = []
         self._target_list = target_list
         self._custom_targets = custom_targets
         self._input_targets, self._fixed_targets = self._create_target_list(target)
         self._targets_table = self._create_uptonight_targets_table()
         self._bodies_table = self._create_uptonight_bodies_table()
         self._comets_table = self._create_uptonight_comets_table()
-
-        return None
 
     def input_targets(self):
         if self._input_targets is not None:
@@ -83,7 +83,7 @@ class Targets:
 
         if os.path.isfile(f"{self._target_list}.yaml"):
             with open(f"{self._target_list}.yaml", "r", encoding="utf-8") as ymlfile:
-                targets = yaml.load(ymlfile, Loader=yaml.FullLoader)
+                targets = yaml.safe_load(ymlfile)
                 input_targets = Table(
                     names=(
                         "name",
@@ -110,7 +110,7 @@ class Targets:
                     if target is None or target == input_target.get("name"):
                         name = input_target.get("name")
                         desc = input_target.get("description")
-                        type = input_target.get("type")
+                        target_type = input_target.get("type")
                         constellation = input_target.get("constellation")
                         ra = input_target.get("ra")
                         dec = input_target.get("dec")
@@ -122,7 +122,7 @@ class Targets:
                             [
                                 name,
                                 desc,
-                                type,
+                                target_type,
                                 constellation,
                                 float(size),
                                 ra,
@@ -132,21 +132,6 @@ class Targets:
                         )
         else:
             input_targets = Table.read(f"{self._target_list}.csv", format="ascii.csv")
-
-        # Adding visual magnitude to target csvs without magnitude by
-        # querying Simbad
-        # Simbad.add_votable_fields('flux(V)')
-        # Simbad.ROW_LIMIT = 1
-        # input_targets['mag'] = input_targets['mag'].astype(float)
-        # input_targets["mag"].info.format = ".1f"
-
-        # for index, name in enumerate(input_targets['name']):
-        #     simbad = Simbad.query_object(name)
-        #     if simbad:
-        #         if simbad[0]['FLUX_V'] != '--':
-        #             simbad_mag = float(simbad[0]['FLUX_V'])
-        #             print(f"name: {name}, mag: {simbad_mag}")
-        #             input_targets[index]['mag'] = simbad_mag
 
         # Create astroplan.FixedTarget objects for each one in the table
         # Used to calculate the fraction of time observable
@@ -198,8 +183,6 @@ class Targets:
         )
         # We need to add Polaris here as well to have the same number of objects as in the input_targets table
         fixed_targets.append(FixedTarget.from_name("Polaris"))
-
-        # input_targets.write(f"{self._target_list}-mag.csv", format="ascii.csv")
 
         return input_targets, fixed_targets
 
@@ -372,7 +355,7 @@ class Targets:
         uptonight_comets["distance sun au"].info.format = ".3f"
         uptonight_comets["absolute magnitude"].info.format = ".2f"
         uptonight_comets["visual magnitude"].info.format = ".2f"
-        uptonight_comets["azimuth"].info.format = ".1f"
+        uptonight_comets["altitude"].info.format = ".1f"
         uptonight_comets["azimuth"].info.format = ".1f"
 
         return uptonight_comets

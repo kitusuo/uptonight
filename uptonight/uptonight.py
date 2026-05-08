@@ -146,12 +146,12 @@ class UpTonight:
         features,
         colors,
         output_datestamp=False,
-        environment={},
-        constraints={},
+        environment=None,
+        constraints=None,
         target_list=None,
-        bucket_list=[],
-        done_list=[],
-        custom_targets=[],
+        bucket_list=None,
+        done_list=None,
+        custom_targets=None,
         observation_date=None,
         type_filter="",
         output_dir=".",
@@ -183,18 +183,18 @@ class UpTonight:
             None
         """
         download_IERS_A()
-        _LOGGER.info("IERS loadad")
+        _LOGGER.info("IERS loaded")
 
         self._location = location
         self._features = features
         self._colors = colors
         self._output_datestamp = output_datestamp
-        self._environment = environment
-        self._constraints = constraints
+        self._environment = environment if environment is not None else {}
+        self._constraints = constraints if constraints is not None else {}
         self._target_list = target_list
-        self._bucket_list = bucket_list
-        self._done_list = done_list
-        self._custom_targets = custom_targets
+        self._bucket_list = bucket_list if bucket_list is not None else []
+        self._done_list = done_list if done_list is not None else []
+        self._custom_targets = custom_targets if custom_targets is not None else []
         self._observation_date = observation_date
         self._type_filter = type_filter
         self._output_dir = output_dir
@@ -218,7 +218,6 @@ class UpTonight:
                 self._moon_separation = self._constraints["moon_separation_min"]
 
         self._observability_constraints = self._get_constraints()
-
         self._filter_ext = ""
         if self._type_filter != "":
             self._filter_ext = f"-{self._type_filter}"
@@ -255,9 +254,7 @@ class UpTonight:
             self._bodies = UpTonightBodies(self._observer, self._observation_timeframe, self._constraints)
 
         if self._features.get(FEATURE_COMETS):
-            self._comets = UpTonightComets(self._observer, self._observation_timeframe, self._constraints)
-
-        return None
+            self._comets = UpTonightComets(self._observer, self._observation_timeframe, self._constraints, self._output_dir)
 
     def _get_observer_location(self) -> EarthLocation:
         """Create an earth locaton with given longitude, latitude, and elevation
@@ -294,7 +291,7 @@ class UpTonight:
             description="My beloved Backyard Telescope",
         )
 
-        _LOGGER.debug(f"Observer created")
+        _LOGGER.debug("Observer created")
 
         return observer
 
@@ -393,11 +390,15 @@ class UpTonight:
 
     def calc(
         self,
-        bucket_list=[],
-        done_list=[],
+        bucket_list=None,
+        done_list=None,
         type_filter="",
         horizon=None,
     ):
+        if bucket_list is None:
+            bucket_list = []
+        if done_list is None:
+            done_list = []
         """Do the math.
 
         Args:

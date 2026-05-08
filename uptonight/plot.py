@@ -65,8 +65,6 @@ class Plot:
 
         self._style_plot()
 
-        return None
-
     def altitude_time_purge(self):
         """Purge old altitude over time plots in the output directory"""
         for filename in os.listdir(f"{self._output_dir}"):
@@ -398,10 +396,7 @@ class Plot:
         plt.rcParams["axes.labelcolor"] = self._colors["text"]  # "w"
         plt.rcParams["axes.facecolor"] = self._colors["axes"]  # "#262626"
         plt.rcParams["axes.edgecolor"] = self._colors["axes"]  # "#F2F2F2"
-        if self._layout == LAYOUT_PORTRAIT:
-            plt.rcParams["axes.titley"] = 1.05
-        else:
-            plt.rcParams["axes.titley"] = 1.05
+        plt.rcParams["axes.titley"] = 1.05
         # Legend
         plt.rcParams["legend.facecolor"] = self._colors["legend"]  # "#262626"
         plt.rcParams["legend.edgecolor"] = self._colors["legend"]  # "#262626"

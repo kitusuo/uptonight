@@ -90,68 +90,48 @@ def main():
     # Read config.yaml
     if os.path.isfile(f"{app_directory}/config.yaml"):
         with open(f"{app_directory}/config.yaml", "r", encoding="utf-8") as ymlfile:
-            cfg = yaml.load(ymlfile, Loader=yaml.FullLoader)
+            cfg = yaml.safe_load(ymlfile)
     else:
         cfg = None
 
-    if cfg is not None and "location" in cfg.keys():
-        for item in cfg["location"].items():
-            if item[1] is not None:
-                location[item[0]] = item[1]
+    def _cfg_merge(section, target):
+        if cfg and cfg.get(section):
+            target.update({k: v for k, v in cfg[section].items() if v is not None})
 
-    if cfg is not None and "environment" in cfg.keys():
-        for item in cfg["environment"].items():
-            if item[1] is not None:
-                environment[item[0]] = item[1]
+    _cfg_merge("location", location)
+    _cfg_merge("environment", environment)
+    _cfg_merge("constraints", constraints)
+    _cfg_merge("colors", colors)
+    _cfg_merge("live", live)
 
-    if cfg is not None and "constraints" in cfg.keys():
-        for item in cfg["constraints"].items():
-            if item[1] is not None:
-                constraints[item[0]] = item[1]
+    if cfg and cfg.get("mqtt") is not None:
+        mqtt = {k: v for k, v in cfg["mqtt"].items() if v is not None}
 
-    if cfg is not None and "colors" in cfg.keys():
-        for item in cfg["colors"].items():
-            if item[1] is not None:
-                colors[item[0]] = item[1]
-
-    if cfg is not None and "live" in cfg.keys():
-        for item in cfg["live"].items():
-            if item[1] is not None:
-                live[item[0]] = item[1]
-
-    if cfg is not None and "mqtt" in cfg.keys():
-        mqtt = {}
-        for item in cfg["mqtt"].items():
-            if item[1] is not None:
-                mqtt[item[0]] = item[1]
-
-    if cfg is not None and "observation_date" in cfg.keys() and cfg["observation_date"] is not None:
+    if cfg and cfg.get("observation_date") is not None:
         observation_date = cfg["observation_date"]
-    if cfg is not None and "target_list" in cfg.keys() and cfg["target_list"] is not None:
+    if cfg and cfg.get("target_list") is not None:
         target_list = cfg["target_list"]
-    if cfg is not None and "type_filter" in cfg.keys() and cfg["type_filter"] is not None:
+    if cfg and cfg.get("type_filter") is not None:
         type_filter = cfg["type_filter"]
-    if cfg is not None and "output_dir" in cfg.keys() and cfg["output_dir"] is not None:
+    if cfg and cfg.get("output_dir") is not None:
         output_dir = f"{app_directory}/{cfg['output_dir']}"
-    if cfg is not None and "live_mode" in cfg.keys() and cfg["live_mode"] is not None:  # deprecated
+    if cfg and cfg.get("live_mode") is not None:  # deprecated
         live = {"enabled": bool(cfg["live_mode"]), "interval": DEFAULT_LIVE_MODE_INTERVAL}
-    if cfg is not None and "layout" in cfg.keys() and cfg["layout"] is not None:
+    if cfg and cfg.get("layout") is not None:
         layout = cfg["layout"]
-    if cfg is not None and "prefix" in cfg.keys() and cfg["prefix"] is not None:
+    if cfg and cfg.get("prefix") is not None:
         prefix = cfg["prefix"]
-    if cfg is not None and "bucket_list" in cfg.keys() and cfg["bucket_list"] is not None:
+    if cfg and cfg.get("bucket_list") is not None:
         bucket_list = cfg["bucket_list"]
-    if cfg is not None and "done_list" in cfg.keys() and cfg["done_list"] is not None:
+    if cfg and cfg.get("done_list") is not None:
         done_list = cfg["done_list"]
-    if cfg is not None and "custom_targets" in cfg.keys() and cfg["custom_targets"] is not None:
+    if cfg and cfg.get("custom_targets") is not None:
         custom_targets = cfg["custom_targets"]
-    if cfg is not None and "horizon" in cfg.keys() and cfg["horizon"] is not None:
+    if cfg and cfg.get("horizon") is not None:
         horizon = cfg["horizon"]
-    if cfg is not None and "colors" in cfg.keys() and cfg["colors"] is not None:
-        colors = cfg["colors"]
-    if cfg is not None and "features" in cfg.keys() and cfg["features"] is not None:
+    if cfg and cfg.get("features") is not None:
         features = cfg["features"]
-    if cfg is not None and "output_datestamp" in cfg.keys() and cfg["output_datestamp"] is not None:
+    if cfg and cfg.get("output_datestamp") is not None:
         output_datestamp = cfg["output_datestamp"]
     if os.getenv("TARGET") is not None:
         target = os.getenv("TARGET")
@@ -215,8 +195,8 @@ def main():
 
     # We need at least a longitute and latitude, the rest is optional
     if location["longitude"] == "" or location["latitude"] == "":
-        _LOGGER.error("Longitute and/or latitude not set")
-        sys.exit(0)
+        _LOGGER.error("Longitude and/or latitude not set")
+        sys.exit(1)
 
     _LOGGER.debug(f"Location longitude: {location['longitude']}")
     _LOGGER.debug(f"Location latitude: {location['latitude']}")

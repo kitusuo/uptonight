@@ -26,9 +26,9 @@ class UpTonightObjects:
         """Init objects
 
         Args:
-            observer (Observer): The astroplan opbserver
-            observation_timeframe (dict): Oberserving time ranges
-            constraints (dict): Observing contraints
+            observer (Observer): The astroplan observer
+            observation_timeframe (dict): Observing time ranges
+            constraints (dict): Observing constraints
             input_targets (Table): Deep sky objects to calculate
         """
         self._observer = observer
@@ -43,10 +43,14 @@ class UpTonightObjects:
         self,
         uptonight_targets,
         ax,
-        bucket_list=[],
-        done_list=[],
+        bucket_list=None,
+        done_list=None,
         type_filter="",
     ):
+        if bucket_list is None:
+            bucket_list = []
+        if done_list is None:
+            done_list = []
         """Create plot and table of targets
 
         Args:
@@ -146,9 +150,10 @@ class UpTonightObjects:
                             name=name,
                         )
 
-                        # Object start azimuth and altitude
-                        azimuth = self._observer.altaz(self._observation_timeframe["observing_start_time"], target).az
-                        altitude = self._observer.altaz(self._observation_timeframe["observing_start_time"], target).alt
+                        # Object start azimuth and altitude (single call)
+                        altaz_start = self._observer.altaz(self._observation_timeframe["observing_start_time"], target)
+                        azimuth = altaz_start.az
+                        altitude = altaz_start.alt
 
                         # Choose marker
                         # Default: Square
@@ -212,9 +217,8 @@ class UpTonightObjects:
                             ax=ax,
                         )
 
-                        altaz = self._observer.altaz(self._observation_timeframe["observing_start_time"], target)
-                        az = altaz.az.radian
-                        alt = 90 - altaz.alt.degree  # Convert altitude to radial distance for polar plot
+                        az = altaz_start.az.radian
+                        alt = 90 - altaz_start.alt.degree  # Convert altitude to radial distance for polar plot
 
                         # Annotate the target with its number
                         ax.annotate(
@@ -245,6 +249,7 @@ class UpTonightObjects:
                     time_grid,
                     style_kwargs=dict(color="w", label=target.name, marker="*"),
                     north_to_east_ccw=self._constraints["north_to_east_ccw"],
+                    ax=ax,
                 )
 
         return uptonight_targets, ax
