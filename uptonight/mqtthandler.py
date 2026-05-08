@@ -204,7 +204,6 @@ class MQTTDeviceHandler:
         _catalogue = self._catalogue.lower().replace(" ", "_")
 
         topic = "uptonight/" + _observatory + "_" + _type + "_" + _catalogue + "/"
-
         try:
             self._mqttclient.publish(topic + "lwt", "ON")
             if message.get("screen", None) is None:

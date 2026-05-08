@@ -171,7 +171,7 @@ class UpTonight:
             environment (dict, optional): Environmental conditions
             constraints (dict, optional): Constraints for targets
             target_list (str, optional): Name of the target list for deep sky objects
-            bucket_list (list, optional): Bocket list
+            bucket_list (list, optional): Bucket list
             done_list (list, optional): Done (exclude) list
             observation_date (str, optional): Day for calculation
             type_filter (str, optional): Filter on object types
@@ -285,7 +285,7 @@ class UpTonight:
         """
 
         observer = Observer(
-            name="Backyard",
+            name=self._location["observatory_name"],
             location=observer_location,
             pressure=self._environment["pressure"] * u.bar,
             relative_humidity=self._environment["relative_humidity"],

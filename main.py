@@ -46,7 +46,7 @@ def main():
         _LOGGER.debug(f"UpTonight running as script file, app directory set to {app_directory}")
 
     # Defaults
-    location = {"longitude": "", "latitude": "", "elevation": 0, "timezone": "UTC"}
+    location = {"longitude": "", "latitude": "", "elevation": 0, "timezone": "UTC", "observatory_name": "Backyard"}
     environment = {"pressure": 0, "temperature": 0, "relative_humidity": 0}
     constraints = {
         "altitude_constraint_min": DEFAULT_ALTITUDE_CONSTRAINT_MIN,
@@ -189,7 +189,9 @@ def main():
         location["elevation"] = int(os.getenv("ELEVATION"))
     if os.getenv("TIMEZONE") is not None:
         location["timezone"] = os.getenv("TIMEZONE")
-
+    if os.getenv("OBSERVATORY_NAME") is not None:
+        location["observatory_name"] = os.getenv("OBSERVATORY_NAME")
+        
     if os.getenv("PRESSURE") is not None:
         environment["pressure"] = float(os.getenv("PRESSURE"))
     if os.getenv("TEMPERATURE") is not None:
@@ -220,6 +222,7 @@ def main():
     _LOGGER.debug(f"Location latitude: {location['latitude']}")
     _LOGGER.debug(f"Location elevation: {location['elevation']}")
     _LOGGER.debug(f"Location timezone: {location['timezone']}")
+    _LOGGER.debug(f"Observatory name: {location['observatory_name']}")
     _LOGGER.debug(f"Observation date: {observation_date}")
     _LOGGER.debug(f"Colors: {colors}")
     _LOGGER.debug(f"Features: {features}")

@@ -264,6 +264,7 @@ LONGITUDE | dms | Longitude in degrees minutes seconds | 11d34m51.50s
 LATITUDE | dms | Latitude in degrees minutes seconds | 48d08m10.77s
 ELEVATION | m | Height above sea level in meters | 519
 TIMEZONE | tz | TZ timezone | "Europe/Berlin"
+OBSERVATORY_NAME | string | Name of your observatory | "ELT" | yes | "Backyard"
 PRESSURE | bar | The ambient pressure | 1.022 | yes | 0
 RELATIVE_HUMIDITY | percentage | The ambient relative humidity | 0.8| yes | 0
 TEMPERATURE | degrees centigrade | The ambient temperature | 12| yes | 0
@@ -326,6 +327,7 @@ location:
   latitude: 48d08m10.77s
   elevation: 519
   timezone: Europe/Berlin
+  observatory_name: ELT
 
 # Environmental conditions.
 environment:

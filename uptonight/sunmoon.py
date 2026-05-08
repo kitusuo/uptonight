@@ -126,6 +126,13 @@ class SunMoon:
         """
 
         darkness = ""
+        sun_next_rising = time + 1 * u.day
+        sun_next_setting = time
+        sun_next_rising_civil = time + 1 * u.day
+        sun_next_setting_civil = time
+        sun_next_rising_civil_short = sun_next_rising_civil.strftime("%m/%d %H:%M")
+        sun_next_setting_civil_short = sun_next_setting_civil.strftime("%m/%d %H:%M")
+
         with warnings.catch_warnings(record=True) as w:
             sun_next_setting = self._observer.sun_set_time(time, which="next", horizon=-18 * u.deg)
             if len(w):
