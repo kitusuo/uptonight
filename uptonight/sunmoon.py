@@ -9,6 +9,24 @@ from astropy.time import Time
 _LOGGER = logging.getLogger(__name__)
 
 
+def _is_no_event(time):
+    """Return True if an astroplan rise/set Time represents no event.
+
+    At high latitudes a body may never cross the requested horizon within the
+    search window. astroplan then returns a masked astropy Time, which blows up
+    when handed to astropy_time_to_datetime / pytz.localize. Detect that case
+    directly instead of relying on the (de-duplicated) warning.
+
+    Args:
+        time (Time): Rise/set/transit time returned by astroplan
+
+    Returns:
+        bool: True if there is no event (masked or missing)
+    """
+
+    return time is None or bool(getattr(time, "masked", False))
+
+
 class SunMoon:
     """UpTonight Target Generation"""
 
@@ -168,12 +186,22 @@ class SunMoon:
                 w.clear()
 
         sun_next_setting_civil, sun_next_rising_civil = self._observer.tonight(time=time, horizon=-6 * u.deg)
-        sun_next_setting_civil_short = self._observer.astropy_time_to_datetime(
-            self._observer.sun_set_time(time, which="next", horizon=-6 * u.deg)
-        ).strftime("%m/%d %H:%M")
-        sun_next_rising_civil_short = self._observer.astropy_time_to_datetime(
-            self._observer.sun_rise_time(time, which="next", horizon=-6 * u.deg)
-        ).strftime("%m/%d %H:%M")
+        sun_set_time_civil = self._observer.sun_set_time(time, which="next", horizon=-6 * u.deg)
+        sun_rise_time_civil = self._observer.sun_rise_time(time, which="next", horizon=-6 * u.deg)
+        if _is_no_event(sun_set_time_civil):
+            _LOGGER.warning("Sun does not cross horizon=-6.0 deg (civil) within 24 hours")
+            sun_next_setting_civil_short = None
+        else:
+            sun_next_setting_civil_short = self._observer.astropy_time_to_datetime(sun_set_time_civil).strftime(
+                "%m/%d %H:%M"
+            )
+        if _is_no_event(sun_rise_time_civil):
+            _LOGGER.warning("Sun does not cross horizon=-6.0 deg (civil) within 24 hours")
+            sun_next_rising_civil_short = None
+        else:
+            sun_next_rising_civil_short = self._observer.astropy_time_to_datetime(sun_rise_time_civil).strftime(
+                "%m/%d %H:%M"
+            )
 
         self._darkness = darkness
         self._sun_next_setting = sun_next_setting
@@ -197,14 +225,12 @@ class SunMoon:
         moon_next_rising_short = None
 
         calctime = time
-        with warnings.catch_warnings(record=True) as w:
+        with warnings.catch_warnings(record=True):
             for i in range(0, 2):
                 moon_set_time = self._observer.moon_set_time(calctime, which="next", horizon=0 * u.deg)
-                if len(w):
-                    if issubclass(w[-1].category, TargetNeverUpWarning):
-                        _LOGGER.warning("Moon does not cross horizon=0.0 deg within 24 hours")
-                        calctime = calctime + 1 * u.day
-                    w.clear()
+                if _is_no_event(moon_set_time):
+                    _LOGGER.warning("Moon does not cross horizon=0.0 deg within 24 hours")
+                    calctime = calctime + 1 * u.day
                 else:
                     moon_next_setting_short = self._observer.astropy_time_to_datetime(moon_set_time).strftime(
                         "%m/%d %H:%M"
@@ -212,14 +238,12 @@ class SunMoon:
                     break
 
         calctime = time
-        with warnings.catch_warnings(record=True) as w:
+        with warnings.catch_warnings(record=True):
             for i in range(0, 2):
                 moon_rise_time = self._observer.moon_rise_time(calctime, which="next", horizon=0 * u.deg)
-                if len(w):
-                    if issubclass(w[-1].category, TargetAlwaysUpWarning):
-                        _LOGGER.warning("Moon does not cross horizon=0.0 deg within 24 hours")
-                        calctime = calctime + 1 * u.day
-                    w.clear()
+                if _is_no_event(moon_rise_time):
+                    _LOGGER.warning("Moon does not cross horizon=0.0 deg within 24 hours")
+                    calctime = calctime + 1 * u.day
                 else:
                     moon_next_rising_short = self._observer.astropy_time_to_datetime(moon_rise_time).strftime(
                         "%m/%d %H:%M"
