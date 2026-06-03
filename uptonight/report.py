@@ -70,6 +70,9 @@ class Report:
             except ConnectionRefusedError as cre:
                 _LOGGER.error(f"MQTT Connection error: {cre}")
                 time.sleep(3)
+            except ConnectionError as ce:
+                _LOGGER.error(f"MQTT connection failed, skipping MQTT publish: {ce}")
+                return
 
         result_for_mqtt = uptonight_result.copy()
         if result_type == FEATURE_OBJECTS:
