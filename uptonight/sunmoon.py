@@ -185,7 +185,14 @@ class SunMoon:
                     sun_next_setting = time
                 w.clear()
 
-        sun_next_setting_civil, sun_next_rising_civil = self._observer.tonight(time=time, horizon=-6 * u.deg)
+        # At extreme latitudes (e.g. midnight sun) the Sun may never cross the
+        # civil horizon. tonight() then raises from deep inside astropy's masked
+        # coordinate machinery rather than returning a masked time, so guard it
+        # and keep the placeholder civil times initialised above.
+        try:
+            sun_next_setting_civil, sun_next_rising_civil = self._observer.tonight(time=time, horizon=-6 * u.deg)
+        except (TypeError, ValueError) as ex:
+            _LOGGER.warning(f"Sun does not cross horizon=-6.0 deg (civil) within 24 hours: {ex}")
         sun_set_time_civil = self._observer.sun_set_time(time, which="next", horizon=-6 * u.deg)
         sun_rise_time_civil = self._observer.sun_rise_time(time, which="next", horizon=-6 * u.deg)
         if _is_no_event(sun_set_time_civil):
