@@ -42,6 +42,7 @@ class MQTTHandler:
         self._mqttclient = None
         self._mqttthread = None
         self._mqttclientconnected = False
+        self._mqttconnectreason = None
 
     def connect(self):
         """Connect to mqtt broker and Gardena Smart System"""
@@ -68,7 +69,15 @@ class MQTTHandler:
             time.sleep(0.1)
 
         if self._mqttclientconnected is False:
-            self.shutdown()
+            # Connection was refused (e.g. bad credentials) or timed out. Stop the
+            # network loop so it does not keep auto-reconnecting, then abort cleanly.
+            self.disconnect()
+            if self._mqttthread is not None:
+                self._mqttthread.join(timeout=5)
+            raise ConnectionError(
+                f"Could not connect to MQTT broker on {self._mqtthost} at {self._mqttport}. "
+                f"Return code: {self._mqttconnectreason}"
+            )
 
         _LOGGER.info("MQTT broker connected")
 
@@ -83,20 +92,20 @@ class MQTTHandler:
     def on_mqtt_connect(self, client, userdata, flags, rc, properties) -> None:
         """Callback when the broker responds to our connection request."""
 
-        self._mqttclientconnected = True
-
-        _LOGGER.info(f"Connected to MQTT broker on {self._mqtthost} at {self._mqttport}")
-
         if flags.get("session_present"):
             _LOGGER.debug("MQTT session present")
 
         if rc == 0:
+            self._mqttclientconnected = True
             _LOGGER.debug("MQTT success connect")
+            _LOGGER.info(f"Connected to MQTT broker on {self._mqtthost} at {self._mqttport}")
             client.publish(
                 f"{self._mqttclientid}/lwt",
                 "ON",
             )
         else:
+            self._mqttclientconnected = False
+            self._mqttconnectreason = rc
             _LOGGER.error(f"MQTT connect not successful. Return code: {rc}")
 
     def disconnect(self):
@@ -143,6 +152,7 @@ class MQTTDeviceHandler:
         _observatory = self._observatory.lower().replace(" ", "_")
         _type = self._type.lower().replace(" ", "_")
         _catalogue = self._catalogue.lower().replace(" ", "_")
+        responses = []
         if self._device_type in (DEVICE_TYPE_UPTONIGHT):
             for function in self._device_functions:
                 root_topic = "homeassistant/" + function[SENSOR_TYPE] + "/"
@@ -171,7 +181,9 @@ class MQTTDeviceHandler:
                 if function[SENSOR_UNIT] != "" and function[SENSOR_UNIT] is not None:
                     config["unit_of_measurement"] = function[SENSOR_UNIT]
 
-                self._mqttclient.publish(root_topic + topic + "config", json.dumps(config), qos=0, retain=True)
+                responses.append(
+                    self._mqttclient.publish(root_topic + topic + "config", json.dumps(config), qos=1, retain=True)
+                )
 
             _LOGGER.debug(f"Published MQTT Config for a {self._device_type}")
 
@@ -193,9 +205,29 @@ class MQTTDeviceHandler:
                     "manufacturer": MANUFACTURER,
                 },
             }
-            self._mqttclient.publish(root_topic + topic + "config", json.dumps(config), qos=0, retain=True)
+            responses.append(
+                self._mqttclient.publish(root_topic + topic + "config", json.dumps(config), qos=1, retain=True)
+            )
             _LOGGER.debug("Published MQTT Camera Config for a %s", self._device_type)
-            
+
+        self._wait_for_publish(responses)
+
+    def _wait_for_publish(self, responses) -> None:
+        """Block until the given publishes are acknowledged by the broker.
+
+        Required before disconnecting: otherwise QoS 1 messages (notably the
+        ~1 MB image) can be torn down before the broker has ingested them.
+
+        Args:
+            responses (list): MQTTMessageInfo objects returned by publish()
+        """
+
+        for response in responses:
+            try:
+                response.wait_for_publish(timeout=10)
+            except (RuntimeError, ValueError) as ex:
+                _LOGGER.warning(f"MQTT message not confirmed within timeout: {ex}")
+
     def publish_device(self, message) -> None:
         """Publish device to mqtt, handle passage if device is mower"""
 
@@ -204,8 +236,9 @@ class MQTTDeviceHandler:
         _catalogue = self._catalogue.lower().replace(" ", "_")
 
         topic = "uptonight/" + _observatory + "_" + _type + "_" + _catalogue + "/"
+        responses = []
         try:
-            self._mqttclient.publish(topic + "lwt", "ON")
+            responses.append(self._mqttclient.publish(topic + "lwt", "ON", qos=1, retain=True))
             if message.get("screen", None) is None:
                 state = {
                     _catalogue: len(message.get("uptonight_table")),
@@ -228,17 +261,25 @@ class MQTTDeviceHandler:
                     _type: message.get("uptonight_table"),
                 }
 
-                response = self._mqttclient.publish(topic + "state", json.dumps(state))
-                response = self._mqttclient.publish(topic + "attributes", json.dumps(attributes))
+                responses.append(self._mqttclient.publish(topic + "state", json.dumps(state), qos=1, retain=True))
+                responses.append(
+                    self._mqttclient.publish(topic + "attributes", json.dumps(attributes), qos=1, retain=True)
+                )
 
             if message.get("screen", None) is not None:
-                response = self._mqttclient.publish(topic + "screen", message.get("screen", None))
+                responses.append(
+                    self._mqttclient.publish(topic + "screen", message.get("screen", None), qos=1, retain=True)
+                )
         except MQTTException as mqttex:
-            self._mqttclient.publish(topic + "lwt", "OFF")
+            self._mqttclient.publish(topic + "lwt", "OFF", qos=1, retain=True)
             _LOGGER.error(f"{self._type}: Not connected")
             raise mqttex
 
-        return response
+        # Block until the broker has acknowledged every publish before returning,
+        # so the caller can disconnect without losing messages.
+        self._wait_for_publish(responses)
+
+        return responses[-1]
 
     def looper(self):
         """Send a MQTT message one by one"""
