@@ -30,9 +30,10 @@ def test_no_cap_when_window_is_within_the_limit():
 def test_window_exactly_at_the_limit_is_not_capped():
     start, end = NOON, NOON + 8 * u.hour
 
-    result_start, _ = _cap_window(start, end, 8)
+    result_start, result_end = _cap_window(start, end, 8)
 
     assert result_start is start
+    assert result_end is end
 
 
 def test_window_longer_than_the_limit_is_capped_to_max_hours():

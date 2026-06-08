@@ -6,7 +6,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
 
 # uv provides Python 3.14 (standalone) and resolves dependencies from uv.lock.
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+# Pinned for reproducible builds.
+COPY --from=ghcr.io/astral-sh/uv:0.11.18 /uv /usr/local/bin/uv
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends pkg-config libhdf5-dev build-essential gcc gfortran && \
@@ -16,10 +17,10 @@ RUN apt-get update && \
 ENV UV_PYTHON_INSTALL_DIR=/opt/python \
     UV_PROJECT_ENVIRONMENT=/app/venv
 
-# Install the locked production dependencies (no dev group) plus PyInstaller.
+# Install the locked production dependencies plus PyInstaller (build group),
+# excluding the dev group. All versions come from uv.lock.
 COPY pyproject.toml uv.lock .python-version ./
-RUN uv sync --frozen --no-dev && \
-    uv pip install --python /app/venv/bin/python pyinstaller
+RUN uv sync --frozen --no-dev --group build
 
 COPY uptonight uptonight
 COPY targets targets

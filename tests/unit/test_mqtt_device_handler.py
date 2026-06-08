@@ -111,11 +111,13 @@ def test_state_message_publishes_target_count(sensor_handler, fake_mqtt_client):
     assert state == {"garyimm": 2}
 
 
-def test_state_message_carries_darkness_in_attributes(sensor_handler, fake_mqtt_client):
-    sensor_handler.publish_device(_state_message(table=[], darkness="None"))
+def test_state_message_routes_metadata_into_the_attributes_topic(sensor_handler, fake_mqtt_client):
+    # The handler assembles the attributes payload (separate from /state); these
+    # keys are its contract, not a value pass-through.
+    sensor_handler.publish_device(_state_message(table=[]))
 
     attributes = json.loads(fake_mqtt_client.payload_for("/attributes"))
-    assert attributes["darkness"] == "None"
+    assert {"observatory", "darkness", "moon_illumination", "objects"} <= attributes.keys()
 
 
 def test_sensor_availability_is_published_online(sensor_handler, fake_mqtt_client):

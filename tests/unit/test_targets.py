@@ -87,9 +87,15 @@ def test_magnitude_sentinel_is_normalised_to_zero(target_list_path):
     assert abell["mag"] == 0.0
 
 
-def test_result_tables_expose_their_key_columns(target_list_path):
+@pytest.mark.parametrize(
+    "table_method, expected_column",
+    [
+        ("targets_table", "foto"),
+        ("bodies_table", "max altitude"),
+        ("comets_table", "distance earth au"),
+    ],
+)
+def test_result_table_exposes_its_key_column(target_list_path, table_method, expected_column):
     targets = Targets(target_list=target_list_path)
 
-    assert "foto" in targets.targets_table().colnames
-    assert "max altitude" in targets.bodies_table().colnames
-    assert "distance earth au" in targets.comets_table().colnames
+    assert expected_column in getattr(targets, table_method)().colnames

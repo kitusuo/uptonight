@@ -191,6 +191,20 @@ The plot and the report will be located in the `out`-diretory.
 
 > ***Note:*** You must use UTF-8 mode with Python on Windows! Enable it by setting the environment variable `PYTHONUTF8=1` before running UpTonight.
 
+### Home Assistant add-on
+
+This repository is also a Home Assistant add-on repository. The add-on runs
+UpTonight on your Home Assistant instance with UI-based configuration and
+publishes the results over MQTT — no hand-edited `config.yaml`.
+
+1. Settings → Add-ons → Add-on Store → ⋮ → **Repositories** → add
+   `https://github.com/kitusuo/uptonight`.
+2. Install **UpTonight** and configure your coordinates and feature toggles in
+   the UI. MQTT broker details are picked up automatically from Home Assistant.
+
+See [`uptonight-addon/DOCS.md`](uptonight-addon/DOCS.md) for full details,
+including the configuration options and a daily-run automation example.
+
 ### Container
 
 You can also run uptonight as a container. To build the image, run

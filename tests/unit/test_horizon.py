@@ -32,9 +32,11 @@ def test_altaz_to_radec_round_trips_back_to_altaz(horizon_helper, make_observer)
     assert recovered.az.degree == pytest.approx(az_in, abs=0.1)
 
 
-def test_horizon_plots_each_direction_and_returns_axes(horizon_helper):
+def test_horizon_plots_each_direction_onto_the_axes(horizon_helper):
     ax = plt.figure().add_subplot(projection="polar")
+    collections_before = len(ax.collections)
 
     result = horizon_helper.horizon([{"alt": 20, "az": 0}, {"alt": 25, "az": 90}], ax)
 
-    assert result is not None
+    assert result is ax
+    assert len(result.collections) > collections_before  # markers were drawn

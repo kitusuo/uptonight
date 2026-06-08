@@ -1,7 +1,10 @@
 name: Tests
 
 on:
+  # Pull requests cover branch development; push only on main (post-merge) so a
+  # PR branch does not run twice.
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 

@@ -8,9 +8,11 @@ left off (network / extra config) and covered elsewhere.
 
 import glob
 import json
+from datetime import UTC, datetime
 
 import pytest
 import yaml
+from astropy import units as u
 
 import uptonight.uptonight as uptonight_module
 from uptonight.uptonight import UpTonight
@@ -71,10 +73,10 @@ def target_list(tmp_path):
     return str(tmp_path / "mini")
 
 
-def _run(location, date, target_list, output_dir, max_hours=None, layout="landscape", live=False,
-         max_number=60, type_filter="", bucket_list=None, done_list=None):
+def _build(location, date, target_list, output_dir, max_hours=None, layout="landscape", live=False,
+           max_number=60, type_filter=""):
     output_dir.mkdir(exist_ok=True)
-    uptonight = UpTonight(
+    return UpTonight(
         location=location,
         features=FEATURES,
         colors=COLORS,
@@ -88,6 +90,12 @@ def _run(location, date, target_list, output_dir, max_hours=None, layout="landsc
         live=live,
         mqtt=None,
     )
+
+
+def _run(location, date, target_list, output_dir, max_hours=None, layout="landscape", live=False,
+         max_number=60, type_filter="", bucket_list=None, done_list=None):
+    uptonight = _build(location, date, target_list, output_dir, max_hours=max_hours, layout=layout,
+                       live=live, max_number=max_number, type_filter=type_filter)
     uptonight.calc(bucket_list=bucket_list, done_list=done_list, type_filter=type_filter)
     return output_dir
 
@@ -96,6 +104,11 @@ def _report_row_count(output_dir):
     # pandas.json is column-oriented: {"target name": {"0": ..., "1": ...}, ...}
     report = json.loads((output_dir / "uptonight-report.json").read_text(encoding="utf-8"))
     return len(report["target name"])
+
+
+def _window_hours(uptonight):
+    timeframe = uptonight._observation_timeframe
+    return (timeframe["observing_end_time"] - timeframe["observing_start_time"]).to(u.hour).value
 
 
 MID_LATITUDE = {
@@ -136,10 +149,13 @@ def test_no_darkness_yields_an_empty_report(target_list, tmp_path):
     assert _report_row_count(out) == 0
 
 
-def test_capped_window_in_deep_polar_night_still_renders(target_list, tmp_path):
-    out = _run(POLAR, "12/21/20", target_list, tmp_path / "out", max_hours=6)
+def test_capped_window_limits_the_deep_polar_night_window(target_list, tmp_path):
+    # Deep polar night is dark for 24h; the cap must shorten the actual window.
+    uptonight = _build(POLAR, "12/21/20", target_list, tmp_path / "out", max_hours=6)
 
-    assert glob.glob(str(out / "*plot*.png"))
+    assert _window_hours(uptonight) == pytest.approx(6, abs=0.01)
+    uptonight.calc()
+    assert glob.glob(str(tmp_path / "out" / "*plot*.png"))
 
 
 def test_portrait_layout_renders(target_list, tmp_path):
@@ -148,11 +164,23 @@ def test_portrait_layout_renders(target_list, tmp_path):
     assert glob.glob(str(out / "*plot*.png"))
 
 
-def test_live_mode_renders_for_the_current_moment(target_list, tmp_path):
-    # Live mode uses a now-based one-minute window instead of the dark window.
-    out = _run(MID_LATITUDE, "06/03/20", target_list, tmp_path / "out", live=True)
+def test_live_mode_uses_a_one_minute_window_around_now(target_list, tmp_path, monkeypatch):
+    # Live mode ignores the dark window and uses now .. now + 1 minute. Pin the
+    # clock so the window (and the render) are deterministic.
+    fixed_now = datetime(2020, 6, 3, 22, 0, 0, tzinfo=UTC)
 
-    assert glob.glob(str(out / "*plot*.png"))
+    class _FixedDatetime(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return fixed_now if tz is None else fixed_now.astimezone(tz)
+
+    monkeypatch.setattr(uptonight_module, "datetime", _FixedDatetime)
+
+    uptonight = _build(MID_LATITUDE, "06/03/20", target_list, tmp_path / "out", live=True)
+
+    assert _window_hours(uptonight) * 3600 == pytest.approx(60, abs=1)
+    uptonight.calc()
+    assert glob.glob(str(tmp_path / "out" / "*plot*.png"))
 
 
 def test_type_filter_and_bucket_list_select_a_subset(target_list, tmp_path):
