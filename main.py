@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import logging
 import math
 import os
@@ -36,17 +35,25 @@ logging.basicConfig(
 )
 
 
-def main():
-    """Main"""
-    # Determine if application is a script file or frozen exe
-    if getattr(sys, "frozen", False):
-        app_directory = "/app"
-        _LOGGER.debug(f"UpTonight running frozen, app directory set to {app_directory}")
-    elif __file__:
-        app_directory = pathlib.Path(__file__).parent.resolve()
-        _LOGGER.debug(f"UpTonight running as script file, app directory set to {app_directory}")
+def build_config(cfg, env, app_directory):
+    """Assemble the UpTonight settings from config and environment.
 
-    # Defaults
+    Pure (no file or network I/O): given the parsed ``config.yaml`` dict (or
+    None) and a mapping of environment variables, return a dict of all the
+    settings UpTonight needs. Environment variables override the config file,
+    which overrides the defaults.
+
+    Args:
+        cfg (dict | None): Parsed config.yaml content.
+        env (Mapping): Environment variables (``os.environ`` in production).
+        app_directory (str): Base directory for resolving relative paths.
+
+    Returns:
+        dict: The resolved settings.
+    """
+
+    cfg = cfg or {}
+
     location = {"longitude": "", "latitude": "", "elevation": 0, "timezone": "UTC", "observatory_name": "Backyard"}
     environment = {"pressure": 0, "temperature": 0, "relative_humidity": 0}
     constraints = {
@@ -62,16 +69,6 @@ def main():
         "north_to_east_ccw": DEFAULT_NORTH_TO_EAST_CCW,
         "observation_max_hours": DEFAULT_OBSERVATION_MAX_HOURS,
     }
-    observation_date = None
-    target_list = f"{app_directory}/{DEFAULT_TARGETS}"
-    type_filter = ""
-    output_dir = f"{app_directory}/out"
-    live = {}
-    bucket_list = []
-    done_list = []
-    custom_targets = []
-    horizon = None
-    horizon_filled = None
     colors = {
         "ticks": "#9C9C9C",
         "grid": "#9C9C9C",
@@ -83,22 +80,25 @@ def main():
         "text": "#FFFFFF",
     }
     features = {"horizon": False, "objects": True, "bodies": True, "comets": False, "alttime": False}
+
+    observation_date = None
+    target_list = f"{app_directory}/{DEFAULT_TARGETS}"
+    type_filter = ""
+    output_dir = f"{app_directory}/out"
+    live = {}
+    bucket_list = []
+    done_list = []
+    custom_targets = []
+    horizon = None
     layout = LAYOUT_LANDSCAPE
     output_datestamp = False
     target = None
     prefix = ""
     mqtt = None
 
-    # Read config.yaml
-    if os.path.isfile(f"{app_directory}/config.yaml"):
-        with open(f"{app_directory}/config.yaml", "r", encoding="utf-8") as ymlfile:
-            cfg = yaml.safe_load(ymlfile)
-    else:
-        cfg = None
-
-    def _cfg_merge(section, target):
-        if cfg and cfg.get(section):
-            target.update({k: v for k, v in cfg[section].items() if v is not None})
+    def _cfg_merge(section, target_dict):
+        if cfg.get(section):
+            target_dict.update({k: v for k, v in cfg[section].items() if v is not None})
 
     _cfg_merge("location", location)
     _cfg_merge("environment", environment)
@@ -106,132 +106,172 @@ def main():
     _cfg_merge("colors", colors)
     _cfg_merge("live", live)
 
-    if cfg and cfg.get("mqtt") is not None:
+    if cfg.get("mqtt") is not None:
         mqtt = {k: v for k, v in cfg["mqtt"].items() if v is not None}
 
-    if cfg and cfg.get("observation_date") is not None:
+    if cfg.get("observation_date") is not None:
         observation_date = cfg["observation_date"]
-    if cfg and cfg.get("target_list") is not None:
+    if cfg.get("target_list") is not None:
         target_list = cfg["target_list"]
-    if cfg and cfg.get("type_filter") is not None:
+    if cfg.get("type_filter") is not None:
         type_filter = cfg["type_filter"]
-    if cfg and cfg.get("output_dir") is not None:
+    if cfg.get("output_dir") is not None:
         output_dir = f"{app_directory}/{cfg['output_dir']}"
-    if cfg and cfg.get("live_mode") is not None:  # deprecated
+    if cfg.get("live_mode") is not None:  # deprecated
         live = {"enabled": bool(cfg["live_mode"]), "interval": DEFAULT_LIVE_MODE_INTERVAL}
-    if cfg and cfg.get("layout") is not None:
+    if cfg.get("layout") is not None:
         layout = cfg["layout"]
-    if cfg and cfg.get("prefix") is not None:
+    if cfg.get("prefix") is not None:
         prefix = cfg["prefix"]
-    if cfg and cfg.get("bucket_list") is not None:
+    if cfg.get("bucket_list") is not None:
         bucket_list = cfg["bucket_list"]
-    if cfg and cfg.get("done_list") is not None:
+    if cfg.get("done_list") is not None:
         done_list = cfg["done_list"]
-    if cfg and cfg.get("custom_targets") is not None:
+    if cfg.get("custom_targets") is not None:
         custom_targets = cfg["custom_targets"]
-    if cfg and cfg.get("horizon") is not None:
+    if cfg.get("horizon") is not None:
         horizon = cfg["horizon"]
-    if cfg and cfg.get("features") is not None:
+    if cfg.get("features") is not None:
         features = cfg["features"]
-    if cfg and cfg.get("output_datestamp") is not None:
+    if cfg.get("output_datestamp") is not None:
         output_datestamp = cfg["output_datestamp"]
-    if os.getenv("TARGET") is not None:
-        target = os.getenv("TARGET")
 
-    if horizon is not None:
-        # Fill space in between anchor points
-        step_size = horizon.get("step_size", 4)
-        anchor_points = horizon.get("anchor_points", [])
+    if env.get("TARGET") is not None:
+        target = env.get("TARGET")
+    if env.get("LONGITUDE") is not None:
+        location["longitude"] = env.get("LONGITUDE")
+    if env.get("LATITUDE") is not None:
+        location["latitude"] = env.get("LATITUDE")
+    if env.get("ELEVATION") is not None:
+        location["elevation"] = int(env.get("ELEVATION"))
+    if env.get("TIMEZONE") is not None:
+        location["timezone"] = env.get("TIMEZONE")
+    if env.get("OBSERVATORY_NAME") is not None:
+        location["observatory_name"] = env.get("OBSERVATORY_NAME")
+    if env.get("PRESSURE") is not None:
+        environment["pressure"] = float(env.get("PRESSURE"))
+    if env.get("TEMPERATURE") is not None:
+        environment["temperature"] = float(env.get("TEMPERATURE"))
+    if env.get("RELATIVE_HUMIDITY") is not None:
+        environment["relative_humidity"] = float(env.get("RELATIVE_HUMIDITY"))
+    if env.get("OBSERVATION_DATE") is not None:
+        observation_date = env.get("OBSERVATION_DATE")
+    if env.get("TARGET_LIST") is not None:
+        target_list = env.get("TARGET_LIST")
+    if env.get("TYPE_FILTER") is not None:
+        type_filter = env.get("TYPE_FILTER")
+    if env.get("OUTPUT_DIR") is not None:
+        output_dir = env.get("OUTPUT_DIR")
+    if env.get("LIVE_MODE") is not None and env.get("LIVE_MODE").lower() == "true":
+        live = {"enabled": True, "interval": DEFAULT_LIVE_MODE_INTERVAL}
+    if env.get("PREFIX") is not None:
+        prefix = env.get("PREFIX")
 
-        horizon_filled = []
-        for index, horizon_direction in enumerate(anchor_points):
-            az_start = horizon_direction.get("az")
-            alt_start = horizon_direction.get("alt")
-            az_stop = anchor_points[index + 1].get("az")
-            alt_stop = anchor_points[index + 1].get("alt")
+    return {
+        "location": location,
+        "environment": environment,
+        "constraints": constraints,
+        "colors": colors,
+        "features": features,
+        "layout": layout,
+        "observation_date": observation_date,
+        "target_list": target_list,
+        "type_filter": type_filter,
+        "output_dir": output_dir,
+        "live": live,
+        "bucket_list": bucket_list,
+        "done_list": done_list,
+        "custom_targets": custom_targets,
+        "horizon": horizon,
+        "output_datestamp": output_datestamp,
+        "target": target,
+        "prefix": prefix,
+        "mqtt": mqtt,
+    }
 
-            distance = math.sqrt((alt_stop - alt_start) ** 2 + (az_stop - az_start) ** 2)
-            steps = round(distance / step_size, 0)
-            if steps == 0:
-                steps = 1
-            inc_alt = (alt_stop - alt_start) / steps
-            inc_az = (az_stop - az_start) / steps
 
-            for step in range(0, int(steps)):
-                horizon_filled.append({"alt": alt_start + inc_alt * step, "az": az_start + inc_az * step})
+def fill_horizon(horizon):
+    """Interpolate the horizon anchor points into a dense alt/az list.
 
-            if index == len(anchor_points) - 2:
-                break
+    Args:
+        horizon (dict | None): Horizon config with ``step_size`` and
+            ``anchor_points``, or None.
 
-    if os.getenv("LONGITUDE") is not None:
-        location["longitude"] = os.getenv("LONGITUDE")
-    if os.getenv("LATITUDE") is not None:
-        location["latitude"] = os.getenv("LATITUDE")
-    if os.getenv("ELEVATION") is not None:
-        location["elevation"] = int(os.getenv("ELEVATION"))
-    if os.getenv("TIMEZONE") is not None:
-        location["timezone"] = os.getenv("TIMEZONE")
-    if os.getenv("OBSERVATORY_NAME") is not None:
-        location["observatory_name"] = os.getenv("OBSERVATORY_NAME")
-        
-    if os.getenv("PRESSURE") is not None:
-        environment["pressure"] = float(os.getenv("PRESSURE"))
-    if os.getenv("TEMPERATURE") is not None:
-        environment["temperature"] = float(os.getenv("TEMPERATURE"))
-    if os.getenv("RELATIVE_HUMIDITY") is not None:
-        environment["relative_humidity"] = float(os.getenv("RELATIVE_HUMIDITY"))
+    Returns:
+        list | None: Interpolated alt/az points, or None when no horizon is set.
+    """
 
-    if os.getenv("OBSERVATION_DATE") is not None:
-        observation_date = os.getenv("OBSERVATION_DATE")
-    if os.getenv("TARGET_LIST") is not None:
-        target_list = os.getenv("TARGET_LIST")
-    if os.getenv("TYPE_FILTER") is not None:
-        type_filter = os.getenv("TYPE_FILTER")
-    if os.getenv("OUTPUT_DIR") is not None:
-        output_dir = os.getenv("OUTPUT_DIR")
-    if os.getenv("LIVE_MODE") is not None:
-        if os.getenv("LIVE_MODE").lower() == "true":
-            live = {"enabled": True, "interval": DEFAULT_LIVE_MODE_INTERVAL}
-    if os.getenv("PREFIX") is not None:
-        prefix = os.getenv("PREFIX")
+    if horizon is None:
+        return None
 
-    # We need at least a longitute and latitude, the rest is optional
+    step_size = horizon.get("step_size", 4)
+    anchor_points = horizon.get("anchor_points", [])
+
+    horizon_filled = []
+    for index, horizon_direction in enumerate(anchor_points):
+        az_start = horizon_direction.get("az")
+        alt_start = horizon_direction.get("alt")
+        az_stop = anchor_points[index + 1].get("az")
+        alt_stop = anchor_points[index + 1].get("alt")
+
+        distance = math.sqrt((alt_stop - alt_start) ** 2 + (az_stop - az_start) ** 2)
+        steps = round(distance / step_size, 0)
+        if steps == 0:
+            steps = 1
+        inc_alt = (alt_stop - alt_start) / steps
+        inc_az = (az_stop - az_start) / steps
+
+        for step in range(0, int(steps)):
+            horizon_filled.append({"alt": alt_start + inc_alt * step, "az": az_start + inc_az * step})
+
+        if index == len(anchor_points) - 2:
+            break
+
+    return horizon_filled
+
+
+def main():
+    """Main"""
+    # Determine if application is a script file or frozen exe
+    if getattr(sys, "frozen", False):
+        app_directory = "/app"
+        _LOGGER.debug(f"UpTonight running frozen, app directory set to {app_directory}")
+    elif __file__:
+        app_directory = pathlib.Path(__file__).parent.resolve()
+        _LOGGER.debug(f"UpTonight running as script file, app directory set to {app_directory}")
+
+    # Read config.yaml
+    cfg = None
+    if os.path.isfile(f"{app_directory}/config.yaml"):
+        with open(f"{app_directory}/config.yaml", "r", encoding="utf-8") as ymlfile:
+            cfg = yaml.safe_load(ymlfile)
+
+    settings = build_config(cfg, os.environ, app_directory)
+    location = settings["location"]
+    environment = settings["environment"]
+    constraints = settings["constraints"]
+    colors = settings["colors"]
+    features = settings["features"]
+    layout = settings["layout"]
+    observation_date = settings["observation_date"]
+    target_list = settings["target_list"]
+    type_filter = settings["type_filter"]
+    output_dir = settings["output_dir"]
+    live = settings["live"]
+    bucket_list = settings["bucket_list"]
+    done_list = settings["done_list"]
+    custom_targets = settings["custom_targets"]
+    output_datestamp = settings["output_datestamp"]
+    target = settings["target"]
+    prefix = settings["prefix"]
+    mqtt = settings["mqtt"]
+
+    horizon_filled = fill_horizon(settings["horizon"])
+
+    # We need at least a longitude and latitude, the rest is optional
     if location["longitude"] == "" or location["latitude"] == "":
         _LOGGER.error("Longitude and/or latitude not set")
         sys.exit(1)
-
-    _LOGGER.debug(f"Location longitude: {location['longitude']}")
-    _LOGGER.debug(f"Location latitude: {location['latitude']}")
-    _LOGGER.debug(f"Location elevation: {location['elevation']}")
-    _LOGGER.debug(f"Location timezone: {location['timezone']}")
-    _LOGGER.debug(f"Observatory name: {location['observatory_name']}")
-    _LOGGER.debug(f"Observation date: {observation_date}")
-    _LOGGER.debug(f"Colors: {colors}")
-    _LOGGER.debug(f"Features: {features}")
-    _LOGGER.debug(f"Output datestamp: {output_datestamp}")
-
-    _LOGGER.debug(f"Environment pressure: {environment['pressure']}")
-    _LOGGER.debug(f"Environment temperature: {environment['temperature']}")
-    _LOGGER.debug(f"Environment relative_humidity: {environment['relative_humidity']}")
-
-    _LOGGER.debug(f"DSO Altitude constraint min: {constraints['altitude_constraint_min']}")
-    _LOGGER.debug(f"DSO Altitude constraint max: {constraints['altitude_constraint_max']}")
-    _LOGGER.debug(f"DSO Airmass constraint: {constraints['airmass_constraint']}")
-    _LOGGER.debug(f"DSO Size constraint min: {constraints['size_constraint_min']}")
-    _LOGGER.debug(f"DSO Size constraint max: {constraints['size_constraint_max']}")
-    _LOGGER.debug(f"DSO Fraction of time observable threshold: {constraints['fraction_of_time_observable_threshold']}")
-    _LOGGER.debug(f"DSO Max number within threshold: {constraints['max_number_within_threshold']}")
-    _LOGGER.debug(f"DSO Moon separation min: {constraints['moon_separation_min']}")
-    _LOGGER.debug(f"DSO Moon separation use illumination: {constraints['moon_separation_use_illumination']}")
-    _LOGGER.debug(f"DSO Target list: {target_list}")
-    _LOGGER.debug(f"DSO Type filter: {type_filter}")
-
-    _LOGGER.debug(f"North to East ccw: {constraints['north_to_east_ccw']}")
-    _LOGGER.debug(f"Output directory: {output_dir}")
-    _LOGGER.debug(f"Live mode: {live.get('enabled', False)}")
-    _LOGGER.debug(f"Live mode interval: {live.get('interval', DEFAULT_LIVE_MODE_INTERVAL)}")
-    _LOGGER.debug(f"Prefix: {prefix}")
-    _LOGGER.debug(f"MQTT: {mqtt}")
 
     start = time.time()
 
@@ -239,7 +279,6 @@ def main():
     if live.get("enabled"):
         _LOGGER.info("UpTonight live mode")
         while True:
-            # Initialize UpTonight
             uptonight = UpTonight(
                 location=location,
                 features=features,
@@ -270,7 +309,6 @@ def main():
     else:
         _LOGGER.info("UpTonight one-time calculation mode")
 
-        # Initialize UpTonight
         uptonight = UpTonight(
             location=location,
             features=features,
@@ -300,7 +338,7 @@ def main():
         )
 
     end = time.time()
-    _LOGGER.info(f"Execution time: %s seconds", end - start)
+    _LOGGER.info("Execution time: %s seconds", end - start)
 
 
 if __name__ == "__main__":

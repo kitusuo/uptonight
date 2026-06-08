@@ -42,6 +42,32 @@ _LOGGER = logging.getLogger(__name__)
 logging.getLogger("matplotlib").setLevel(logging.INFO)
 
 
+def _cap_window(start_time, end_time, max_hours):
+    """Limit an observing window to ``max_hours``, centred on its midpoint.
+
+    At extreme latitudes the dark window can span a whole day (deep polar
+    night), which produces a cluttered plot. When a cap is configured and the
+    window is longer than it, return a window of ``max_hours`` centred on the
+    midpoint (which is ~solar midnight) of the original window. Otherwise return
+    the window unchanged.
+
+    Args:
+        start_time (Time): Window start.
+        end_time (Time): Window end.
+        max_hours (float | None): Maximum window length, or None for no cap.
+
+    Returns:
+        tuple[Time, Time]: The (possibly capped) start and end times.
+    """
+
+    if max_hours is None or (end_time - start_time).to(u.hour).value <= max_hours:
+        return start_time, end_time
+
+    center = start_time + (end_time - start_time) / 2
+    half = (max_hours / 2) * u.hour
+    return center - half, center + half
+
+
 class UpTonight:
     """
     Calculates the deep sky objects for tonights sky and a given earth location.
@@ -348,17 +374,15 @@ class UpTonight:
             observing_start_time_civil = self._sun_moon.sun_next_setting_civil()
             observing_end_time_civil = self._sun_moon.sun_next_rising_civil()
 
-            # Cap the window length if configured. At extreme latitudes the dark
-            # window can span a whole day (deep polar night); centre a shorter
-            # window on the darkest moment so the plot stays readable.
+            # Cap the window length if configured, mirroring the capped window
+            # onto the civil window so the plot axis matches.
             max_hours = self._constraints.get("observation_max_hours")
-            if max_hours is not None and (observing_end_time - observing_start_time).to(u.hour).value > max_hours:
-                center = observing_start_time + (observing_end_time - observing_start_time) / 2
-                half = (max_hours / 2) * u.hour
-                observing_start_time = center - half
-                observing_end_time = center + half
-                observing_start_time_civil = observing_start_time
-                observing_end_time_civil = observing_end_time
+            capped_start, capped_end = _cap_window(observing_start_time, observing_end_time, max_hours)
+            if capped_start is not observing_start_time:
+                observing_start_time = capped_start
+                observing_end_time = capped_end
+                observing_start_time_civil = capped_start
+                observing_end_time_civil = capped_end
 
         _LOGGER.debug("Observing start time: {0}".format(observing_start_time.strftime("%m/%d/%Y %H:%M:%S")))
 

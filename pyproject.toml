@@ -4,3 +4,41 @@ line-length = 120
 [flake8]
 max-line-length = 128
 count = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "--strict-markers"
+markers = [
+    "slow: end-to-end tests that exercise the full calc pipeline",
+]
+# NOTE: do not globally ignore astroplan's TargetAlwaysUp/NeverUpWarning. The
+# darkness classification in sunmoon._sun relies on catch_warnings(record=True),
+# which inherits these ambient filters; ignoring them changes the behaviour
+# under test. Only third-party deprecation noise is silenced here.
+filterwarnings = [
+    "ignore:.*resetCache.*:DeprecationWarning",
+    "ignore:.*enablePackrat.*:DeprecationWarning",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["uptonight"]
+omit = [
+    # CLI entry point - rewritten for the Home Assistant add-on in a later step.
+    "main.py",
+    # Comets pull the MPC comet-elements catalogue over the network; covering it
+    # offline needs fabricated MPC fixtures. Exercised by manual/integration runs.
+    "uptonight/comets.py",
+]
+
+[tool.coverage.report]
+# Enforced on the uptonight/ library package.
+fail_under = 90
+show_missing = true
+exclude_also = [
+    # Defensive/never-run branches that are not meaningful to unit test.
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]
