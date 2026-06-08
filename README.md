@@ -177,12 +177,15 @@ export TIMEZONE=Europe/Berlin
 To run UpTonight simply do the following:
 
 ```sh
-# just once
-pip install -r requirements.txt
+# just once: create the environment (Python 3.14 + locked dependencies)
+uv sync
 
 # run
-python3 main.py
+uv run python main.py
 ```
+
+UpTonight uses [uv](https://docs.astral.sh/uv/) for dependency management; the
+exact versions are pinned in `uv.lock`.
 
 The plot and the report will be located in the `out`-diretory.
 

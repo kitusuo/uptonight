@@ -1,0 +1,25 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Sync environment (Python from .python-version + locked deps)
+        run: uv sync --frozen
+
+      - name: Run tests with coverage
+        # The 90% gate on the uptonight/ package is enforced via fail_under in
+        # pyproject.toml [tool.coverage.report].
+        run: uv run pytest --cov=uptonight --cov-report=term-missing
