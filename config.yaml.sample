@@ -59,6 +59,12 @@ constraints:
   # false: Show azimuth increasing clockwise (cw).
   north_to_east_ccw: false
 
+  # Optional cap on the observing window length in hours. Leave unset for no
+  # limit (use the full dark window). At extreme latitudes the dark window can
+  # span a whole day (deep polar night); setting e.g. 8 centres an 8 hour window
+  # on the darkest moment so the plot stays readable.
+  # observation_max_hours: 8
+
 output_datestamp: false
 
 # Personal bucket list to always include

@@ -6,6 +6,13 @@ from astroplan.exceptions import TargetAlwaysUpWarning, TargetNeverUpWarning
 from astropy import units as u
 from astropy.time import Time
 
+from .const import (
+    DARKNESS_ASTRONOMICAL,
+    DARKNESS_CIVIL,
+    DARKNESS_NAUTICAL,
+    DARKNESS_NONE,
+)
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -83,6 +90,14 @@ class SunMoon:
         if self._darkness is not None:
             return self._darkness
         return None
+
+    def is_dark(self) -> bool:
+        """Whether the night reaches any darkness (astronomical, nautical or civil).
+
+        Returns:
+            bool: False when the Sun never drops below the civil horizon.
+        """
+        return self._darkness != DARKNESS_NONE
 
     def sun_next_setting(self) -> Time:
         if self._sun_next_setting is not None:
@@ -164,23 +179,28 @@ class SunMoon:
                             if len(w):
                                 if issubclass(w[-1].category, TargetAlwaysUpWarning):
                                     _LOGGER.warning("Sun is not setting civically")
+                                    # Sun never drops below the civil horizon: no
+                                    # darkness of any kind tonight.
+                                    darkness = DARKNESS_NONE
                                     sun_next_rising = time + 1 * u.day
                                     sun_next_setting = time
                             else:
-                                darkness = "civil"
+                                darkness = DARKNESS_CIVIL
                                 sun_next_setting, sun_next_rising = self._observer.tonight(
                                     time=time, horizon=-6 * u.deg
                                 )
                     else:
-                        darkness = "nautical"
+                        darkness = DARKNESS_NAUTICAL
                         sun_next_setting, sun_next_rising = self._observer.tonight(time=time, horizon=-12 * u.deg)
             else:
-                darkness = "astronomical"
+                darkness = DARKNESS_ASTRONOMICAL
                 sun_next_setting, sun_next_rising = self._observer.tonight(time=time, horizon=-18 * u.deg)
-            # TODO: Proper handling for sun never up
+            # Sun never rises to -18 deg (deep polar night): astronomically dark
+            # for the whole window.
             if len(w):
                 if issubclass(w[-1].category, TargetNeverUpWarning):
                     _LOGGER.warning("Sun is not rising astronomically")
+                    darkness = DARKNESS_ASTRONOMICAL
                     sun_next_rising = time + 1 * u.day
                     sun_next_setting = time
                 w.clear()

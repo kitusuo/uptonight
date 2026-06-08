@@ -227,14 +227,17 @@ class UpTonight:
         self._input_targets = self._targets.input_targets()
         # List of fixed targets to calculate the fraction of time observable with
         self._fixed_targets = self._targets.fixed_targets()
-        # Add fraction of time observable to input targets
-        self._input_targets = self._targets.input_targets_add_foto(
-            self._constraints,
-            self._observability_constraints,
-            self._observation_timeframe,
-            self._observer,
-            self._fixed_targets,
-        )
+        # Add fraction of time observable to input targets. Skip this expensive
+        # pre-compute when there is no darkness: nothing is observable and the
+        # deep-sky table stays empty anyway.
+        if self._live or self._sun_moon.is_dark():
+            self._input_targets = self._targets.input_targets_add_foto(
+                self._constraints,
+                self._observability_constraints,
+                self._observation_timeframe,
+                self._observer,
+                self._fixed_targets,
+            )
 
         if self._features.get(FEATURE_HORIZON):
             self._horizon = UpTonightHorizon(
@@ -345,6 +348,18 @@ class UpTonight:
             observing_start_time_civil = self._sun_moon.sun_next_setting_civil()
             observing_end_time_civil = self._sun_moon.sun_next_rising_civil()
 
+            # Cap the window length if configured. At extreme latitudes the dark
+            # window can span a whole day (deep polar night); centre a shorter
+            # window on the darkest moment so the plot stays readable.
+            max_hours = self._constraints.get("observation_max_hours")
+            if max_hours is not None and (observing_end_time - observing_start_time).to(u.hour).value > max_hours:
+                center = observing_start_time + (observing_end_time - observing_start_time) / 2
+                half = (max_hours / 2) * u.hour
+                observing_start_time = center - half
+                observing_end_time = center + half
+                observing_start_time_civil = observing_start_time
+                observing_end_time_civil = observing_end_time
+
         _LOGGER.debug("Observing start time: {0}".format(observing_start_time.strftime("%m/%d/%Y %H:%M:%S")))
 
         current_day = self._observer.astropy_time_to_datetime(observing_start_time).strftime("%Y%m%d")
@@ -438,50 +453,58 @@ class UpTonight:
         else:
             ax = fig.add_axes([0.0, 0.04, 0.9, 0.885], polar=True)
 
-        # Creating plot of the horizon
-        if self._features.get(FEATURE_HORIZON):
-            if horizon is not None:
-                ax = self._horizon.horizon(horizon, ax)
-
-        # Purge old altitude time plots
-        if not self._live and self._features.get("alttime"):
-            plot.altitude_time_purge()
-
-        # Creating plot and table of targets
-        if self._features.get(FEATURE_OBJECTS):
-            uptonight_targets, ax = self._objects.objects(uptonight_targets, ax, bucket_list, done_list, type_filter)
-            if not self._live and self._features.get("alttime"):
-                for target_row in uptonight_targets:
-                    plot.altitude_time(
-                        target_row,
-                    )
-
-        # Creating plot and table of bodies
-        if self._features.get(FEATURE_BODIES):
-            uptonight_bodies, ax = self._bodies.bodies(uptonight_bodies, ax)
-            if not self._live and self._features.get("alttime"):
-                for target_row in uptonight_bodies:
-                    plot.altitude_time(
-                        target_row,
-                    )
-
-        if self._features.get(FEATURE_COMETS):
-            uptonight_comets, ax = self._comets.comets(uptonight_comets, ax)
-            if not self._live and self._features.get("alttime"):
-                for target_row in uptonight_comets:
-                    plot.altitude_time(
-                        target_row,
-                    )
-
-        # Title, legend, and config
         astronight_from = self._observer.astropy_time_to_datetime(self._observation_timeframe["observing_start_time"])
         astronight_to = self._observer.astropy_time_to_datetime(self._observation_timeframe["observing_end_time"])
 
-        plot.legend(ax, astronight_from.strftime("%m/%d %H:%M"), astronight_to.strftime("%m/%d %H:%M"))
+        # Without any darkness there is nothing observable. Skip the observability
+        # calculations and the (otherwise full-day, cluttered) plot entirely; the
+        # result tables stay empty and the reports below publish 0 counts.
+        if self._live or self._sun_moon.is_dark():
+            # Creating plot of the horizon
+            if self._features.get(FEATURE_HORIZON):
+                if horizon is not None:
+                    ax = self._horizon.horizon(horizon, ax)
 
-        # Save plot
-        _LOGGER.debug("Saving plot")
-        plot.save_png(plt, self._output_datestamp)
+            # Purge old altitude time plots
+            if not self._live and self._features.get("alttime"):
+                plot.altitude_time_purge()
+
+            # Creating plot and table of targets
+            if self._features.get(FEATURE_OBJECTS):
+                uptonight_targets, ax = self._objects.objects(
+                    uptonight_targets, ax, bucket_list, done_list, type_filter
+                )
+                if not self._live and self._features.get("alttime"):
+                    for target_row in uptonight_targets:
+                        plot.altitude_time(
+                            target_row,
+                        )
+
+            # Creating plot and table of bodies
+            if self._features.get(FEATURE_BODIES):
+                uptonight_bodies, ax = self._bodies.bodies(uptonight_bodies, ax)
+                if not self._live and self._features.get("alttime"):
+                    for target_row in uptonight_bodies:
+                        plot.altitude_time(
+                            target_row,
+                        )
+
+            if self._features.get(FEATURE_COMETS):
+                uptonight_comets, ax = self._comets.comets(uptonight_comets, ax)
+                if not self._live and self._features.get("alttime"):
+                    for target_row in uptonight_comets:
+                        plot.altitude_time(
+                            target_row,
+                        )
+
+            # Title, legend, and config
+            plot.legend(ax, astronight_from.strftime("%m/%d %H:%M"), astronight_to.strftime("%m/%d %H:%M"))
+
+            # Save plot
+            _LOGGER.debug("Saving plot")
+            plot.save_png(plt, self._output_datestamp)
+        else:
+            _LOGGER.info("No astronomical darkness tonight - skipping observability calculations and plot")
 
         if not self._live:
             # Save reports

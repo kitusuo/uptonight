@@ -6,6 +6,13 @@ FEATURE_BODIES = "bodies"
 FEATURE_COMETS = "comets"
 FEATURE_HORIZON = "horizon"
 
+# Deepest twilight the Sun reaches. DARKNESS_NONE means the Sun never drops
+# below the civil horizon (-6°), i.e. there is no darkness of any kind.
+DARKNESS_ASTRONOMICAL = "astronomical"
+DARKNESS_NAUTICAL = "nautical"
+DARKNESS_CIVIL = "civil"
+DARKNESS_NONE = "none"
+
 # LAYOUT = "layout"
 LAYOUT_LANDSCAPE = "landscape"
 LAYOUT_PORTRAIT = "portrait"
@@ -41,6 +48,11 @@ DEFAULT_MAGNITUDE_LIMIT = 12
 
 # Default Live Mode Interval
 DEFAULT_LIVE_MODE_INTERVAL = 900
+
+# Maximum length of the observing window in hours. None means no limit (use the
+# full dark window). Useful at extreme latitudes where the window can span a
+# whole day (deep polar night), which would otherwise produce a cluttered plot.
+DEFAULT_OBSERVATION_MAX_HOURS = None
 
 #
 # Solar System
