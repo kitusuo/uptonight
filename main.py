@@ -19,6 +19,7 @@ from uptonight.const import (
     DEFAULT_MOON_SEPARATION_MIN,
     DEFAULT_MOON_SEPARATION_USE_ILLUMINATION,
     DEFAULT_NORTH_TO_EAST_CCW,
+    DEFAULT_OBSERVATION_MAX_HOURS,
     DEFAULT_SIZE_CONSTRAINT_MAX,
     DEFAULT_SIZE_CONSTRAINT_MIN,
     DEFAULT_TARGETS,
@@ -59,6 +60,7 @@ def main():
         "fraction_of_time_observable_threshold": DEFAULT_FRACTION_OF_TIME_OBSERVABLE_THRESHOLD,
         "max_number_within_threshold": DEFAULT_MAX_NUMBER_WITHIN_THRESHOLD,
         "north_to_east_ccw": DEFAULT_NORTH_TO_EAST_CCW,
+        "observation_max_hours": DEFAULT_OBSERVATION_MAX_HOURS,
     }
     observation_date = None
     target_list = f"{app_directory}/{DEFAULT_TARGETS}"

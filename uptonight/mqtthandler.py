@@ -194,7 +194,9 @@ class MQTTDeviceHandler:
             config = {
                 "name": f"{self._catalogue} {self._device_functions[0][SENSOR_NAME]}",
                 "image_topic": topic + "screen",
-                "availability_topic": topic + "lwt",
+                # Dedicated availability topic so the image can be taken offline
+                # (no darkness) independently of the sensor entities.
+                "availability_topic": topic + "screen_availability",
                 "payload_available": "ON",
                 "payload_not_available": "OFF",
                 "unique_id": "image" + "_" + _observatory + "_" + _type + "_" + _catalogue,
@@ -239,7 +241,18 @@ class MQTTDeviceHandler:
         responses = []
         try:
             responses.append(self._mqttclient.publish(topic + "lwt", "ON", qos=1, retain=True))
-            if message.get("screen", None) is None:
+            if message.get("image_available", None) is not None:
+                # Drive the image entity's own availability (no image bytes here).
+                responses.append(
+                    self._mqttclient.publish(
+                        topic + "screen_availability", message.get("image_available"), qos=1, retain=True
+                    )
+                )
+            elif message.get("screen", None) is not None:
+                responses.append(
+                    self._mqttclient.publish(topic + "screen", message.get("screen", None), qos=1, retain=True)
+                )
+            else:
                 state = {
                     _catalogue: len(message.get("uptonight_table")),
                 }
@@ -264,11 +277,6 @@ class MQTTDeviceHandler:
                 responses.append(self._mqttclient.publish(topic + "state", json.dumps(state), qos=1, retain=True))
                 responses.append(
                     self._mqttclient.publish(topic + "attributes", json.dumps(attributes), qos=1, retain=True)
-                )
-
-            if message.get("screen", None) is not None:
-                responses.append(
-                    self._mqttclient.publish(topic + "screen", message.get("screen", None), qos=1, retain=True)
                 )
         except MQTTException as mqttex:
             self._mqttclient.publish(topic + "lwt", "OFF", qos=1, retain=True)

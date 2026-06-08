@@ -142,19 +142,24 @@ class Report:
             message_queue.put(data)
 
             if device in (DEVICE_TYPE_CAMERA):
-                buf = BytesIO()
-                self._plot.savefig(buf, format="png")  # You can also use 'jpg', 'svg', etc.
+                if self._sun_moon.is_dark():
+                    # Mark the image entity available and publish the fresh plot.
+                    message_queue.put({"image_available": "ON"})
 
-                # Get bytearray
-                buf.seek(0)
-                plot_bytes = bytearray(buf.read())
+                    buf = BytesIO()
+                    self._plot.savefig(buf, format="png")  # You can also use 'jpg', 'svg', etc.
 
-                _LOGGER.debug(f"Image size {len(plot_bytes)} bytes")
-                data = {
-                    "screen": plot_bytes,
-                }
+                    # Get bytearray
+                    buf.seek(0)
+                    plot_bytes = bytearray(buf.read())
 
-                message_queue.put(data)
+                    _LOGGER.debug(f"Image size {len(plot_bytes)} bytes")
+                    message_queue.put({"screen": plot_bytes})
+                else:
+                    # No darkness: take the image entity offline and do not publish a
+                    # (stale) plot, so Home Assistant reports it as unavailable.
+                    _LOGGER.info("No darkness - marking image entity unavailable")
+                    message_queue.put({"image_available": "OFF"})
 
         mqtt_device_handler.looper()
 
