@@ -27,6 +27,7 @@ file to hand-edit.
 | `timezone` | no | container `TZ` / `UTC` | e.g. `Europe/Helsinki` |
 | `observatory_name` | no | `Home` | Used in the MQTT entity names (`uptonight_<name>_…`) |
 | `observation_date` | no | tonight | `mm/dd/yy`, e.g. `06/21/26` — handy for testing |
+| `observation_max_hours` | no | no limit | Cap the observing window length (hours); shortens long winter/polar-night windows for a readable plot |
 | `objects` | – | `true` | Deep-sky objects |
 | `bodies` | – | `true` | Sun/Moon/planets |
 | `comets` | – | `false` | Comets (downloads the MPC catalogue) |
