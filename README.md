@@ -177,16 +177,33 @@ export TIMEZONE=Europe/Berlin
 To run UpTonight simply do the following:
 
 ```sh
-# just once
-pip install -r requirements.txt
+# just once: create the environment (Python 3.14 + locked dependencies)
+uv sync
 
 # run
-python3 main.py
+uv run python main.py
 ```
+
+UpTonight uses [uv](https://docs.astral.sh/uv/) for dependency management; the
+exact versions are pinned in `uv.lock`.
 
 The plot and the report will be located in the `out`-diretory.
 
 > ***Note:*** You must use UTF-8 mode with Python on Windows! Enable it by setting the environment variable `PYTHONUTF8=1` before running UpTonight.
+
+### Home Assistant add-on
+
+This repository is also a Home Assistant add-on repository. The add-on runs
+UpTonight on your Home Assistant instance with UI-based configuration and
+publishes the results over MQTT — no hand-edited `config.yaml`.
+
+1. Settings → Add-ons → Add-on Store → ⋮ → **Repositories** → add
+   `https://github.com/kitusuo/uptonight`.
+2. Install **UpTonight** and configure your coordinates and feature toggles in
+   the UI. MQTT broker details are picked up automatically from Home Assistant.
+
+See [`uptonight-addon/DOCS.md`](uptonight-addon/DOCS.md) for full details,
+including the configuration options and a daily-run automation example.
 
 ### Container
 

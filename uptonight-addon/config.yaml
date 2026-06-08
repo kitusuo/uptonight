@@ -1,0 +1,47 @@
+# Home Assistant add-on manifest.
+#
+# The slug is "uptonight" (independent of this folder's name, which cannot be
+# "uptonight" because that is the Python package). Installed locally it becomes
+# local_uptonight; via this repository it becomes <repo-hash>_uptonight.
+name: UpTonight
+version: "2.7.0"
+slug: uptonight
+description: Best astrophotography targets for the night, published to MQTT for Home Assistant
+url: https://github.com/kitusuo/uptonight
+arch:
+  - amd64
+  - aarch64
+# One-shot: compute, publish to MQTT, exit. Trigger via hassio.addon_start.
+init: false
+startup: once
+boot: manual
+# MQTT broker details are injected from Home Assistant's service - the user
+# never types host/username/password.
+services:
+  - mqtt:want
+# Persistent space for generated plots/reports (host: /addon_configs/<slug>).
+map:
+  - addon_config:rw
+options:
+  observatory_name: Home
+  observation_date: ""
+  objects: true
+  bodies: true
+  comets: false
+  horizon: false
+  alttime: false
+schema:
+  # Required - WGS84 decimal degrees.
+  latitude: float
+  longitude: float
+  # Optional - sensible defaults applied in run.sh.
+  elevation: int?
+  timezone: str?
+  observatory_name: str?
+  # Blank = tonight; otherwise mm/dd/yy (e.g. 06/21/26).
+  observation_date: str?
+  objects: bool
+  bodies: bool
+  comets: bool
+  horizon: bool
+  alttime: bool

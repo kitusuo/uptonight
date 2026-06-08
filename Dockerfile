@@ -5,30 +5,29 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /app
 
+# uv provides Python 3.14 (standalone) and resolves dependencies from uv.lock.
+# Pinned for reproducible builds.
+COPY --from=ghcr.io/astral-sh/uv:0.11.18 /uv /usr/local/bin/uv
+
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3-pip python3-venv python3-dev pkg-config libhdf5-dev build-essential gcc gfortran && \
-    cd /usr/local/bin && \
-    ln -s /usr/bin/python3 python && \
-    python3 --version && \
+    apt-get install -y --no-install-recommends pkg-config libhdf5-dev build-essential gcc gfortran && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt requirements.txt
+ENV UV_PYTHON_INSTALL_DIR=/opt/python \
+    UV_PROJECT_ENVIRONMENT=/app/venv
 
-RUN python3 -m venv venv && \
-    venv/bin/pip install --no-cache-dir -r requirements.txt && \
-    venv/bin/pip list
-
-RUN venv/bin/pip install pyinstaller
+# Install the locked production dependencies plus PyInstaller (build group),
+# excluding the dev group. All versions come from uv.lock.
+COPY pyproject.toml uv.lock .python-version ./
+RUN uv sync --frozen --no-dev --group build
 
 COPY uptonight uptonight
 COPY targets targets
 COPY skyfield-data skyfield-data
 COPY main.py .
 
-# ENV PATH="/app/venv/bin:$PATH"
-# ENTRYPOINT ["python3", "main.py"]
-RUN venv/bin/pyinstaller --recursive-copy-metadata matplotlib --collect-all dateutil --onefile main.py 
+RUN /app/venv/bin/pyinstaller --recursive-copy-metadata matplotlib --collect-all dateutil --onefile main.py
 
 # Run image
 FROM ubuntu:noble AS runtime-image

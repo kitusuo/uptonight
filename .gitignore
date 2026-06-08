@@ -192,6 +192,11 @@ config.yaml
 CometEls.txt
 comets.txt
 
+# The Home Assistant add-on ships its own run.sh and config.yaml manifest;
+# the bare rules above must not exclude them.
+!uptonight-addon/run.sh
+!uptonight-addon/config.yaml
+
 targets/NGCObjects.csv
 targets/*.py
 targets/*.md

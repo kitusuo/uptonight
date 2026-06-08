@@ -1,0 +1,8 @@
+# Per-architecture base image. The Supervisor injects this as the Dockerfile's
+# BUILD_FROM arg. Both architectures use the same multi-arch tag - Docker
+# resolves the matching layer per host. The tag tracks this fork's published
+# image (republished by CI on merge), so the add-on always layers onto the
+# latest UpTonight build.
+build_from:
+  amd64: ghcr.io/kitusuo/uptonight:latest
+  aarch64: ghcr.io/kitusuo/uptonight:latest
