@@ -1,0 +1,33 @@
+# Dependabot keeps dependencies up to date, including the SHA-pinned GitHub
+# Actions (it bumps the pin + the version comment together).
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates
+version: 2
+updates:
+  # GitHub Actions used in the workflows.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      github-actions:
+        patterns: ["*"]
+
+  # Python dependencies (pyproject.toml + uv.lock).
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      python:
+        patterns: ["*"]
+
+  # Base images in the application Dockerfile. The add-on Dockerfile is
+  # intentionally left out: it tracks ghcr.io/kitusuo/uptonight:latest by
+  # design, which Dependabot cannot meaningfully version.
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      docker:
+        patterns: ["*"]

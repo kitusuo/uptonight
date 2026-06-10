@@ -1,5 +1,5 @@
 # Compile image
-FROM ubuntu:noble AS compile-image
+FROM ubuntu:noble@sha256:786a8b558f7be160c6c8c4a54f9a57274f3b4fb1491cf65146521ae77ff1dc54 AS compile-image
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -7,7 +7,7 @@ WORKDIR /app
 
 # uv provides Python 3.14 (standalone) and resolves dependencies from uv.lock.
 # Pinned for reproducible builds.
-COPY --from=ghcr.io/astral-sh/uv:0.11.18 /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.11.18@sha256:78bc42400d77b0678ba95765305c826652ed5431f399257271dda681d0318f03 /uv /usr/local/bin/uv
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends pkg-config libhdf5-dev build-essential gcc gfortran && \
@@ -30,7 +30,7 @@ COPY main.py .
 RUN /app/venv/bin/pyinstaller --recursive-copy-metadata matplotlib --collect-all dateutil --onefile main.py
 
 # Run image
-FROM ubuntu:noble AS runtime-image
+FROM ubuntu:noble@sha256:786a8b558f7be160c6c8c4a54f9a57274f3b4fb1491cf65146521ae77ff1dc54 AS runtime-image
 
 WORKDIR /app
 
