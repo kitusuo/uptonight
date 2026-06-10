@@ -77,6 +77,12 @@ if bashio::config.has_value 'observation_date'; then
   config="$(jq --arg d "$(bashio::config 'observation_date')" '. + {observation_date: $d}' <<<"${config}")"
 fi
 
+# --- Optional cap on the observing window length (hours) ----------------------
+if bashio::config.has_value 'observation_max_hours'; then
+  config="$(jq --argjson hours "$(bashio::config 'observation_max_hours')" \
+    '. + {constraints: {observation_max_hours: $hours}}' <<<"${config}")"
+fi
+
 # --- MQTT from the Home Assistant service (omit if none is offered) ----------
 if bashio::services.available 'mqtt'; then
   mqtt_host="$(bashio::services 'mqtt' 'host')"

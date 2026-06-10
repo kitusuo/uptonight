@@ -4,7 +4,7 @@
 # "uptonight" because that is the Python package). Installed locally it becomes
 # local_uptonight; via this repository it becomes <repo-hash>_uptonight.
 name: UpTonight
-version: "2.7.0"
+version: "2.8.0"
 slug: uptonight
 description: Best astrophotography targets for the night, published to MQTT for Home Assistant
 url: https://github.com/kitusuo/uptonight
@@ -40,6 +40,9 @@ schema:
   observatory_name: str?
   # Blank = tonight; otherwise mm/dd/yy (e.g. 06/21/26).
   observation_date: str?
+  # Cap the observing window length in hours (blank = no limit). Useful for long
+  # winter / polar-night windows that would otherwise produce a cluttered plot.
+  observation_max_hours: float?
   objects: bool
   bodies: bool
   comets: bool

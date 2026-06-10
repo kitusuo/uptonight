@@ -157,6 +157,18 @@ def test_observation_date_is_omitted_when_blank(tmp_path):
     assert "observation_date" not in config
 
 
+def test_observation_max_hours_maps_to_constraints_when_set(tmp_path):
+    config = _generate_config(tmp_path, {**BASE_OPTIONS, "observation_max_hours": 8})
+
+    assert config["constraints"] == {"observation_max_hours": 8}
+
+
+def test_constraints_are_omitted_when_window_cap_is_unset(tmp_path):
+    config = _generate_config(tmp_path, BASE_OPTIONS)
+
+    assert "constraints" not in config
+
+
 def test_optional_fields_fall_back_to_defaults(tmp_path):
     minimal = {
         "latitude": 60.17,
