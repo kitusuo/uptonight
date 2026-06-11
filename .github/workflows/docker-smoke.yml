@@ -27,10 +27,10 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Run container (one-shot)
+      # --- Tier 1: file output (no MQTT, env-configured) ---------------------
+      - name: Run container (file output)
         # No config file is mounted: UpTonight reads these env overrides. A
-        # mid-latitude winter night guarantees a non-empty result. comets/mqtt
-        # stay off by default.
+        # mid-latitude winter night guarantees a non-empty result.
         run: |
           mkdir -p smoke-out
           docker run --rm \
@@ -43,7 +43,7 @@ jobs:
             -v "${{ github.workspace }}/smoke-out:/out" \
             uptonight:smoke
 
-      - name: Verify output
+      - name: Verify file output
         run: |
           set -euo pipefail
           echo "=== output directory ==="
@@ -58,4 +58,57 @@ jobs:
           echo "targets in report: ${count}"
           test "${count}" -gt 0
 
-          echo "Smoke test passed."
+          echo "File-output smoke test passed."
+
+      # --- Tier 2: MQTT publishing -------------------------------------------
+      - name: Run container (MQTT publishing)
+        # Start a broker, subscribe to everything, then run UpTonight with a
+        # mounted config pointing at the broker. MQTT config is only available
+        # via the config file, hence the mount.
+        run: |
+          set -euo pipefail
+          docker network create smoke-net
+
+          docker run -d --name mosquitto --network smoke-net \
+            -v "${{ github.workspace }}/ci/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro" \
+            eclipse-mosquitto:2
+
+          # Wait until the broker accepts connections (mosquitto_sub does not
+          # retry, so it must only start once the broker is up).
+          for _ in $(seq 1 15); do
+            if docker run --rm --network smoke-net eclipse-mosquitto:2 \
+                 mosquitto_pub -h mosquitto -t smoke/ready -m 1 >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+          done
+
+          # Capture every topic that is published (topic only - the image
+          # payload is binary, so -F '%t' keeps the log clean).
+          docker run -d --name subscriber --network smoke-net \
+            eclipse-mosquitto:2 mosquitto_sub -h mosquitto -t '#' -F '%t'
+
+          sleep 2  # let the subscriber connect
+
+          docker run --rm --network smoke-net \
+            -v "${{ github.workspace }}/ci/smoke-config.yaml:/app/config.yaml:ro" \
+            uptonight:smoke
+
+          sleep 3  # let the subscriber flush
+          docker logs subscriber | sort -u > captured-topics.txt
+          echo "=== captured topics ==="
+          cat captured-topics.txt
+
+      - name: Verify MQTT messages
+        run: |
+          set -euo pipefail
+          require() {
+            grep -qE "$1" captured-topics.txt || { echo "MISSING topic matching: $1"; exit 1; }
+            echo "found: $1"
+          }
+          require '^homeassistant/.*/config$'          # discovery config
+          require '^uptonight/.*/state$'               # sensor state
+          require '^uptonight/.*/attributes$'          # sensor attributes
+          require '^uptonight/.*/screen$'              # image bytes
+          require '^uptonight/.*/screen_availability$' # image availability
+          echo "MQTT smoke test passed."
