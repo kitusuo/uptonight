@@ -91,6 +91,8 @@ jobs:
           sleep 2  # let the subscriber connect
 
           docker run --rm --network smoke-net \
+            -e OUTPUT_DIR=/out \
+            -v "${{ github.workspace }}/smoke-out:/out" \
             -v "${{ github.workspace }}/ci/smoke-config.yaml:/app/config.yaml:ro" \
             uptonight:smoke
 
