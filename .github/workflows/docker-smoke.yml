@@ -164,3 +164,38 @@ jobs:
           # observable comets varies, so the report may be empty.
           test -f comets-out/uptonight-comets-report.json
           echo "Comets smoke test passed."
+
+      # --- Tier E: rejected MQTT connection is handled gracefully ------------
+      - name: Run container (bad MQTT credentials)
+        run: |
+          set -eo pipefail
+          # Broker requiring authentication.
+          mkdir -p ci-auth && chmod 777 ci-auth
+          docker run --rm -v "${{ github.workspace }}/ci-auth:/data" eclipse-mosquitto:2 \
+            mosquitto_passwd -b -c /data/passwd smoke-user correct-pass
+          docker run -d --name mosquitto-auth --network smoke-net \
+            -v "${{ github.workspace }}/ci/mosquitto-auth.conf:/mosquitto/config/mosquitto.conf:ro" \
+            -v "${{ github.workspace }}/ci-auth/passwd:/mosquitto/config/passwd:ro" \
+            eclipse-mosquitto:2
+          for _ in $(seq 1 15); do
+            if docker run --rm --network smoke-net eclipse-mosquitto:2 \
+                 mosquitto_pub -h mosquitto-auth -u smoke-user -P correct-pass -t smoke/ready -m 1 >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+          done
+
+          # Run with the WRONG password: UpTonight must skip MQTT and exit 0.
+          docker run --rm --network smoke-net \
+            -e OUTPUT_DIR=/out \
+            -v "${{ github.workspace }}/smoke-out:/out" \
+            -v "${{ github.workspace }}/ci/smoke-config-badauth.yaml:/app/config.yaml:ro" \
+            uptonight:smoke 2>&1 | tee badauth.log
+
+      - name: Verify graceful MQTT failure
+        run: |
+          set -euo pipefail
+          # The container already exited 0 (the step above would have failed
+          # otherwise); confirm it took the graceful-skip path.
+          grep -qi "skipping MQTT publish" badauth.log
+          echo "Bad-credentials graceful-skip passed."
