@@ -121,3 +121,26 @@ jobs:
           require '^uptonight/.*/screen$'              # image bytes
           require '^uptonight/.*/screen_availability$' # image availability
           echo "MQTT smoke test passed."
+
+      # --- Tier G: retained state repopulates a fresh subscriber -------------
+      - name: Verify retained state
+        # The app has exited; a brand-new subscriber must still receive the
+        # retained config/state/image, proving Home Assistant would repopulate
+        # after a restart.
+        run: |
+          set -euo pipefail
+          docker run -d --name subscriber-fresh --network smoke-net \
+            eclipse-mosquitto:2 mosquitto_sub -h mosquitto -t '#' -F '%t'
+          sleep 3
+          docker logs subscriber-fresh | sort -u > retained-topics.txt
+          echo "=== retained topics (fresh subscriber) ==="
+          cat retained-topics.txt
+
+          require() {
+            grep -qE "$1" retained-topics.txt || { echo "MISSING retained topic: $1"; exit 1; }
+            echo "found retained: $1"
+          }
+          require '^homeassistant/.*/config$'
+          require '^uptonight/.*/state$'
+          require '^uptonight/.*/screen$'
+          echo "Retained-state check passed."
