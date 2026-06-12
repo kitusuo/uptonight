@@ -144,3 +144,23 @@ jobs:
           require '^uptonight/.*/state$'
           require '^uptonight/.*/screen$'
           echo "Retained-state check passed."
+
+      # --- Tier B: comets (the one module without unit coverage) -------------
+      - name: Run container (comets)
+        run: |
+          mkdir -p comets-out
+          docker run --rm \
+            -e OUTPUT_DIR=/out \
+            -v "${{ github.workspace }}/comets-out:/out" \
+            -v "${{ github.workspace }}/ci/smoke-config-comets.yaml:/app/config.yaml:ro" \
+            uptonight:smoke
+
+      - name: Verify comets output
+        run: |
+          set -euo pipefail
+          ls -la comets-out
+          # The comets module ran end-to-end (MPC download + parse + compute)
+          # without crashing and produced its report. The set of currently
+          # observable comets varies, so the report may be empty.
+          test -f comets-out/uptonight-comets-report.json
+          echo "Comets smoke test passed."
