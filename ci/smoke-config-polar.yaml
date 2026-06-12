@@ -1,0 +1,19 @@
+# Deep polar night: 85N at the winter solstice is astronomically dark for the
+# whole day, with a circumpolar (masked) Moon. Exercises the polar-night
+# classification, the masked rise/set handling, and the window cap - the
+# combination that historically crashed.
+location:
+  latitude: 85.0
+  longitude: 0.0
+  elevation: 0
+  timezone: UTC
+  observatory_name: Smoke
+features:
+  objects: true
+  bodies: true
+  comets: false
+  horizon: false
+  alttime: false
+observation_date: 12/21/25
+constraints:
+  observation_max_hours: 8

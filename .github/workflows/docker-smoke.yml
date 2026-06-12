@@ -199,3 +199,69 @@ jobs:
           # otherwise); confirm it took the graceful-skip path.
           grep -qi "skipping MQTT publish" badauth.log
           echo "Bad-credentials graceful-skip passed."
+
+      # --- Tier A: high-latitude edge cases (the regression matrix) ----------
+      - name: Run container (no darkness / midnight sun)
+        run: |
+          set -eo pipefail
+          # Clean broker so retained messages from earlier runs do not leak in.
+          docker run -d --name mosquitto-nodark --network smoke-net \
+            -v "${{ github.workspace }}/ci/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro" \
+            eclipse-mosquitto:2
+          for _ in $(seq 1 15); do
+            if docker run --rm --network smoke-net eclipse-mosquitto:2 \
+                 mosquitto_pub -h mosquitto-nodark -t smoke/ready -m 1 >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+          done
+          docker run -d --name subscriber-nodark --network smoke-net \
+            eclipse-mosquitto:2 mosquitto_sub -h mosquitto-nodark -t '#' -F '%t %p'
+          sleep 2
+
+          mkdir -p nodark-out
+          docker run --rm --network smoke-net \
+            -e OUTPUT_DIR=/out \
+            -v "${{ github.workspace }}/nodark-out:/out" \
+            -v "${{ github.workspace }}/ci/smoke-config-nodarkness.yaml:/app/config.yaml:ro" \
+            uptonight:smoke
+
+          sleep 3
+          docker logs subscriber-nodark | sort -u > nodark-topics.txt
+          echo "=== no-darkness topics+payloads ==="
+          cat nodark-topics.txt
+
+      - name: Verify no-darkness behavior
+        run: |
+          set -euo pipefail
+          ls -la nodark-out
+          # No plot is generated when there is no darkness.
+          if ls nodark-out/*plot*.png >/dev/null 2>&1; then
+            echo "a plot was generated but should not have been"; exit 1
+          fi
+          # The report exists but is empty.
+          test "$(jq '.["target name"] | length' nodark-out/uptonight-report.json)" -eq 0
+          # The image entity is taken offline and the image itself is not sent.
+          grep -qE '/screen_availability OFF$' nodark-topics.txt
+          if grep -qE '/screen ' nodark-topics.txt; then
+            echo "image bytes were published but should not have been"; exit 1
+          fi
+          echo "No-darkness smoke test passed."
+
+      - name: Run container (deep polar night)
+        run: |
+          mkdir -p polar-out
+          docker run --rm \
+            -e OUTPUT_DIR=/out \
+            -v "${{ github.workspace }}/polar-out:/out" \
+            -v "${{ github.workspace }}/ci/smoke-config-polar.yaml:/app/config.yaml:ro" \
+            uptonight:smoke
+
+      - name: Verify deep polar night
+        run: |
+          set -euo pipefail
+          ls -la polar-out
+          # 24h of astronomical darkness with a circumpolar Moon must not crash;
+          # the capped window still renders a plot.
+          ls polar-out/*plot*.png >/dev/null
+          echo "Deep-polar-night smoke test passed."

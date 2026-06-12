@@ -1,0 +1,21 @@
+# Midnight sun: 70N at the summer solstice has no darkness of any kind (well
+# inside the Arctic Circle, far from the ~60.5N threshold, so axial-tilt drift
+# never matters). UpTonight must skip the observability calc and plot and mark
+# the image entity unavailable over MQTT.
+location:
+  latitude: 70.0
+  longitude: 23.0
+  elevation: 10
+  timezone: Europe/Helsinki
+  observatory_name: Smoke
+features:
+  objects: true
+  bodies: false
+  comets: false
+  horizon: false
+  alttime: false
+observation_date: 06/21/25
+mqtt:
+  host: mosquitto-nodark
+  port: 1883
+  clientid: uptonight-nodark
