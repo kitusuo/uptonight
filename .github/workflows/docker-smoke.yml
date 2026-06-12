@@ -51,7 +51,12 @@ jobs:
 
           test -f smoke-out/uptonight-report.txt
           test -f smoke-out/uptonight-report.json
-          ls smoke-out/*plot*.png >/dev/null
+
+          # The plot must be a real, non-trivial PNG (not an empty/corrupt file).
+          plot=$(ls smoke-out/*plot*.png | head -1)
+          file "${plot}" | grep -q "PNG image data"
+          test "$(stat -c%s "${plot}")" -gt 10000
+          echo "plot: $(file -b "${plot}")"
 
           # The report must contain at least one observable target.
           count=$(jq '.["target name"] | length' smoke-out/uptonight-report.json)
