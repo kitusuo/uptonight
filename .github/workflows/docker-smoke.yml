@@ -265,3 +265,48 @@ jobs:
           # the capped window still renders a plot.
           ls polar-out/*plot*.png >/dev/null
           echo "Deep-polar-night smoke test passed."
+
+      # --- Tier C: the actual add-on artifact (run.sh + real bashio) ---------
+      - name: Build and run the add-on image
+        run: |
+          set -eo pipefail
+          # Layer the add-on onto the image we just built (the PR's code).
+          docker build --build-arg BUILD_FROM=uptonight:smoke \
+            -t uptonight-addon:smoke uptonight-addon
+
+          # Mock the Supervisor so bashio::services resolves the MQTT broker.
+          docker run -d --name supervisor --network smoke-net \
+            -v "${{ github.workspace }}/ci/fake-supervisor.py:/srv.py:ro" \
+            python:3-alpine python /srv.py
+          sleep 3
+
+          # Capture the add-on's publishes (its observatory is "Addon", a
+          # different topic prefix from the earlier runs on this broker).
+          docker run -d --name subscriber-addon --network smoke-net \
+            eclipse-mosquitto:2 mosquitto_sub -h mosquitto -t 'uptonight/#' -F '%t'
+          sleep 2
+
+          mkdir -p addon-data addon-out
+          cp ci/addon-options.json addon-data/options.json
+          docker run --rm --network smoke-net \
+            -e SUPERVISOR_TOKEN=dummy \
+            -v "${{ github.workspace }}/addon-data:/data:ro" \
+            -v "${{ github.workspace }}/addon-out:/config" \
+            uptonight-addon:smoke
+
+          sleep 3
+          docker logs subscriber-addon | sort -u > addon-topics.txt
+          echo "=== add-on topics ==="
+          cat addon-topics.txt
+
+      - name: Verify add-on (config generation + run + publish)
+        run: |
+          set -euo pipefail
+          # The add-on generated a config and the app produced output.
+          ls -la addon-out/out
+          test -f addon-out/out/uptonight-report.json
+          ls addon-out/out/*plot*.png >/dev/null
+          # And it published over MQTT via the real bashio + Supervisor path.
+          grep -qE '^uptonight/addon_.*/state$' addon-topics.txt
+          grep -qE '^uptonight/addon_.*/screen$' addon-topics.txt
+          echo "Add-on image smoke test passed."
