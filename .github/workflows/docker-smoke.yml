@@ -169,14 +169,13 @@ jobs:
       - name: Run container (bad MQTT credentials)
         run: |
           set -eo pipefail
-          # Broker requiring authentication.
-          mkdir -p ci-auth && chmod 777 ci-auth
-          docker run --rm -v "${{ github.workspace }}/ci-auth:/data" eclipse-mosquitto:2 \
-            mosquitto_passwd -b -c /data/passwd smoke-user correct-pass
+          # Broker requiring authentication. Generate the password file inside
+          # the container (in /tmp, owned by the mosquitto user) so mosquitto 2.0
+          # accepts its permissions, then start the broker.
           docker run -d --name mosquitto-auth --network smoke-net \
             -v "${{ github.workspace }}/ci/mosquitto-auth.conf:/mosquitto/config/mosquitto.conf:ro" \
-            -v "${{ github.workspace }}/ci-auth/passwd:/mosquitto/config/passwd:ro" \
-            eclipse-mosquitto:2
+            eclipse-mosquitto:2 sh -c \
+            "mosquitto_passwd -b -c /tmp/passwd smoke-user correct-pass && exec mosquitto -c /mosquitto/config/mosquitto.conf"
           for _ in $(seq 1 15); do
             if docker run --rm --network smoke-net eclipse-mosquitto:2 \
                  mosquitto_pub -h mosquitto-auth -u smoke-user -P correct-pass -t smoke/ready -m 1 >/dev/null 2>&1; then
@@ -184,6 +183,8 @@ jobs:
             fi
             sleep 1
           done
+          echo "=== auth broker log ==="
+          docker logs mosquitto-auth 2>&1 | tail -15
 
           # Run with the WRONG password: UpTonight must skip MQTT and exit 0.
           docker run --rm --network smoke-net \
