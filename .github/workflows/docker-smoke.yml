@@ -279,11 +279,9 @@ jobs:
             eclipse-mosquitto:2 mosquitto_sub -h mosquitto -t 'uptonight/#' -F '%t'
           sleep 2
 
-          mkdir -p addon-data addon-out
-          cp ci/addon-options.json addon-data/options.json
+          mkdir -p addon-out
           docker run --rm --network smoke-net \
             -e SUPERVISOR_TOKEN=dummy \
-            -v "${{ github.workspace }}/addon-data:/data:ro" \
             -v "${{ github.workspace }}/addon-out:/config" \
             uptonight-addon:smoke
 

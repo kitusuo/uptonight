@@ -1,13 +1,33 @@
 """Minimal Home Assistant Supervisor stand-in for the add-on smoke test.
 
-bashio resolves the MQTT broker via ``GET http://supervisor/services/mqtt`` and
-reads the ``.data`` object. Return an anonymous broker pointing at the smoke
-test's mosquitto container; everything else gets a benign OK.
+bashio reads BOTH the add-on options and the MQTT broker details from the
+Supervisor API (not from /data/options.json), so this serves:
+
+  GET /addons/self/options/config  -> the add-on options
+  GET /services/mqtt               -> an anonymous broker (the smoke mosquitto)
+
+Everything else gets a benign OK. bashio reads the ``.data`` object from each.
 """
 
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
+OPTIONS = {
+    "result": "ok",
+    "data": {
+        "latitude": 48.14,
+        "longitude": 11.58,
+        "elevation": 519,
+        "timezone": "Europe/Berlin",
+        "observatory_name": "Addon",
+        "observation_date": "12/15/25",
+        "objects": True,
+        "bodies": False,
+        "comets": False,
+        "horizon": False,
+        "alttime": False,
+    },
+}
 MQTT = {
     "result": "ok",
     "data": {
@@ -33,7 +53,13 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
-        self._send(MQTT if self.path.rstrip("/").endswith("/services/mqtt") else OK)
+        path = self.path.rstrip("/")
+        if path.endswith("/addons/self/options/config"):
+            self._send(OPTIONS)
+        elif path.endswith("/services/mqtt"):
+            self._send(MQTT)
+        else:
+            self._send(OK)
 
     def log_message(self, *args):
         pass
