@@ -1,0 +1,16 @@
+# Comets-only smoke run. Comets are the one module with no unit coverage (they
+# pull the MPC catalogue over the network); this exercises them end-to-end in
+# the frozen binary.
+location:
+  latitude: 48.14
+  longitude: 11.58
+  elevation: 519
+  timezone: Europe/Berlin
+  observatory_name: Smoke
+features:
+  objects: false
+  bodies: false
+  comets: true
+  horizon: false
+  alttime: false
+observation_date: 12/15/25

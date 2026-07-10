@@ -1,0 +1,20 @@
+# UpTonight config for the MQTT smoke test. MQTT is only configurable via the
+# config file (not env), so this is mounted at /app/config.yaml. The broker host
+# is the mosquitto container's network alias.
+location:
+  latitude: 48.14
+  longitude: 11.58
+  elevation: 519
+  timezone: Europe/Berlin
+  observatory_name: Smoke
+features:
+  objects: true
+  bodies: false
+  comets: false
+  horizon: false
+  alttime: false
+observation_date: 12/15/25
+mqtt:
+  host: mosquitto
+  port: 1883
+  clientid: uptonight-smoke

@@ -1,0 +1,21 @@
+# Deliberately wrong MQTT password. UpTonight must log the rejection and exit
+# cleanly (skip publishing) rather than crash - the connect-failure handling.
+location:
+  latitude: 48.14
+  longitude: 11.58
+  elevation: 519
+  timezone: Europe/Berlin
+  observatory_name: Smoke
+features:
+  objects: true
+  bodies: false
+  comets: false
+  horizon: false
+  alttime: false
+observation_date: 12/15/25
+mqtt:
+  host: mosquitto-auth
+  port: 1883
+  user: smoke-user
+  password: WRONG-password
+  clientid: uptonight-badauth

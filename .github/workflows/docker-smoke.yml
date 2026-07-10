@@ -1,0 +1,303 @@
+name: Docker smoke test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5  # v4.1.0
+
+      - name: Build image (linux/amd64)
+        uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf  # v7.2.0
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          load: true
+          tags: uptonight:smoke
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # --- Tier 1: file output (no MQTT, env-configured) ---------------------
+      - name: Run container (file output)
+        # No config file is mounted: UpTonight reads these env overrides. A
+        # mid-latitude winter night guarantees a non-empty result.
+        run: |
+          mkdir -p smoke-out
+          docker run --rm \
+            -e LATITUDE=48.14 \
+            -e LONGITUDE=11.58 \
+            -e ELEVATION=519 \
+            -e TIMEZONE=Europe/Berlin \
+            -e OBSERVATION_DATE=12/15/25 \
+            -e OUTPUT_DIR=/out \
+            -v "${{ github.workspace }}/smoke-out:/out" \
+            uptonight:smoke
+
+      - name: Verify file output
+        run: |
+          set -euo pipefail
+          echo "=== output directory ==="
+          ls -la smoke-out
+
+          test -f smoke-out/uptonight-report.txt
+          test -f smoke-out/uptonight-report.json
+
+          # The plot must be a real, non-trivial PNG (not an empty/corrupt file).
+          plot=$(ls smoke-out/*plot*.png | head -1)
+          file "${plot}" | grep -q "PNG image data"
+          test "$(stat -c%s "${plot}")" -gt 10000
+          echo "plot: $(file -b "${plot}")"
+
+          # The report must contain at least one observable target.
+          count=$(jq '.["target name"] | length' smoke-out/uptonight-report.json)
+          echo "targets in report: ${count}"
+          test "${count}" -gt 0
+
+          echo "File-output smoke test passed."
+
+      # --- Tier 2: MQTT publishing -------------------------------------------
+      - name: Run container (MQTT publishing)
+        # Start a broker, subscribe to everything, then run UpTonight with a
+        # mounted config pointing at the broker. MQTT config is only available
+        # via the config file, hence the mount.
+        run: |
+          set -euo pipefail
+          docker network create smoke-net
+
+          docker run -d --name mosquitto --network smoke-net \
+            -v "${{ github.workspace }}/ci/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro" \
+            eclipse-mosquitto:2
+
+          # Wait until the broker accepts connections (mosquitto_sub does not
+          # retry, so it must only start once the broker is up).
+          for _ in $(seq 1 15); do
+            if docker run --rm --network smoke-net eclipse-mosquitto:2 \
+                 mosquitto_pub -h mosquitto -t smoke/ready -m 1 >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+          done
+
+          # Capture every topic that is published (topic only - the image
+          # payload is binary, so -F '%t' keeps the log clean).
+          docker run -d --name subscriber --network smoke-net \
+            eclipse-mosquitto:2 mosquitto_sub -h mosquitto -t '#' -F '%t'
+
+          sleep 2  # let the subscriber connect
+
+          docker run --rm --network smoke-net \
+            -e OUTPUT_DIR=/out \
+            -v "${{ github.workspace }}/smoke-out:/out" \
+            -v "${{ github.workspace }}/ci/smoke-config.yaml:/app/config.yaml:ro" \
+            uptonight:smoke
+
+          sleep 3  # let the subscriber flush
+          docker logs subscriber | sort -u > captured-topics.txt
+          echo "=== captured topics ==="
+          cat captured-topics.txt
+          echo "=== broker log ==="
+          docker logs mosquitto 2>&1 | tail -30
+
+      - name: Verify MQTT messages
+        run: |
+          set -euo pipefail
+          require() {
+            grep -qE "$1" captured-topics.txt || { echo "MISSING topic matching: $1"; exit 1; }
+            echo "found: $1"
+          }
+          require '^homeassistant/.*/config$'          # discovery config
+          require '^uptonight/.*/state$'               # sensor state
+          require '^uptonight/.*/attributes$'          # sensor attributes
+          require '^uptonight/.*/screen$'              # image bytes
+          require '^uptonight/.*/screen_availability$' # image availability
+          echo "MQTT smoke test passed."
+
+      # --- Tier G: retained state repopulates a fresh subscriber -------------
+      - name: Verify retained state
+        # The app has exited; a brand-new subscriber must still receive the
+        # retained config/state/image, proving Home Assistant would repopulate
+        # after a restart.
+        run: |
+          set -euo pipefail
+          docker run -d --name subscriber-fresh --network smoke-net \
+            eclipse-mosquitto:2 mosquitto_sub -h mosquitto -t '#' -F '%t'
+          sleep 3
+          docker logs subscriber-fresh | sort -u > retained-topics.txt
+          echo "=== retained topics (fresh subscriber) ==="
+          cat retained-topics.txt
+
+          require() {
+            grep -qE "$1" retained-topics.txt || { echo "MISSING retained topic: $1"; exit 1; }
+            echo "found retained: $1"
+          }
+          require '^homeassistant/.*/config$'
+          require '^uptonight/.*/state$'
+          require '^uptonight/.*/screen$'
+          echo "Retained-state check passed."
+
+      # --- Tier B: comets (the one module without unit coverage) -------------
+      - name: Run container (comets)
+        run: |
+          mkdir -p comets-out
+          docker run --rm \
+            -e OUTPUT_DIR=/out \
+            -v "${{ github.workspace }}/comets-out:/out" \
+            -v "${{ github.workspace }}/ci/smoke-config-comets.yaml:/app/config.yaml:ro" \
+            uptonight:smoke
+
+      - name: Verify comets output
+        run: |
+          set -euo pipefail
+          ls -la comets-out
+          # The comets module ran end-to-end (MPC download + parse + compute)
+          # without crashing and produced its report. The set of currently
+          # observable comets varies, so the report may be empty.
+          test -f comets-out/uptonight-comets-report.json
+          echo "Comets smoke test passed."
+
+      # --- Tier E: rejected MQTT connection is handled gracefully ------------
+      - name: Run container (bad MQTT credentials)
+        run: |
+          set -eo pipefail
+          # Broker that rejects every connection (allow_anonymous false, no auth
+          # backend) -> the app gets a "not authorized" CONNACK.
+          docker run -d --name mosquitto-auth --network smoke-net \
+            -v "${{ github.workspace }}/ci/mosquitto-auth.conf:/mosquitto/config/mosquitto.conf:ro" \
+            eclipse-mosquitto:2
+          sleep 3
+          echo "=== auth broker log ==="
+          docker logs mosquitto-auth 2>&1 | tail -15
+
+          # Run with the WRONG password: UpTonight must skip MQTT and exit 0.
+          docker run --rm --network smoke-net \
+            -e OUTPUT_DIR=/out \
+            -v "${{ github.workspace }}/smoke-out:/out" \
+            -v "${{ github.workspace }}/ci/smoke-config-badauth.yaml:/app/config.yaml:ro" \
+            uptonight:smoke 2>&1 | tee badauth.log
+
+      - name: Verify graceful MQTT failure
+        run: |
+          set -euo pipefail
+          # The container already exited 0 (the step above would have failed
+          # otherwise); confirm it took the graceful-skip path.
+          grep -qi "skipping MQTT publish" badauth.log
+          echo "Bad-credentials graceful-skip passed."
+
+      # --- Tier A: high-latitude edge cases (the regression matrix) ----------
+      - name: Run container (no darkness / midnight sun)
+        run: |
+          set -eo pipefail
+          # Clean broker so retained messages from earlier runs do not leak in.
+          docker run -d --name mosquitto-nodark --network smoke-net \
+            -v "${{ github.workspace }}/ci/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro" \
+            eclipse-mosquitto:2
+          for _ in $(seq 1 15); do
+            if docker run --rm --network smoke-net eclipse-mosquitto:2 \
+                 mosquitto_pub -h mosquitto-nodark -t smoke/ready -m 1 >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+          done
+          docker run -d --name subscriber-nodark --network smoke-net \
+            eclipse-mosquitto:2 mosquitto_sub -h mosquitto-nodark -t '#' -F '%t %p'
+          sleep 2
+
+          mkdir -p nodark-out
+          docker run --rm --network smoke-net \
+            -e OUTPUT_DIR=/out \
+            -v "${{ github.workspace }}/nodark-out:/out" \
+            -v "${{ github.workspace }}/ci/smoke-config-nodarkness.yaml:/app/config.yaml:ro" \
+            uptonight:smoke
+
+          sleep 3
+          docker logs subscriber-nodark | sort -u > nodark-topics.txt
+          echo "=== no-darkness topics+payloads ==="
+          cat nodark-topics.txt
+
+      - name: Verify no-darkness behavior
+        run: |
+          set -euo pipefail
+          ls -la nodark-out
+          # No plot is generated when there is no darkness.
+          if ls nodark-out/*plot*.png >/dev/null 2>&1; then
+            echo "a plot was generated but should not have been"; exit 1
+          fi
+          # The report exists but is empty.
+          test "$(jq '.["target name"] | length' nodark-out/uptonight-report.json)" -eq 0
+          # The image entity is taken offline and the image itself is not sent.
+          grep -qE '/screen_availability OFF$' nodark-topics.txt
+          if grep -qE '/screen ' nodark-topics.txt; then
+            echo "image bytes were published but should not have been"; exit 1
+          fi
+          echo "No-darkness smoke test passed."
+
+      - name: Run container (deep polar night)
+        run: |
+          mkdir -p polar-out
+          docker run --rm \
+            -e OUTPUT_DIR=/out \
+            -v "${{ github.workspace }}/polar-out:/out" \
+            -v "${{ github.workspace }}/ci/smoke-config-polar.yaml:/app/config.yaml:ro" \
+            uptonight:smoke
+
+      - name: Verify deep polar night
+        run: |
+          set -euo pipefail
+          ls -la polar-out
+          # 24h of astronomical darkness with a circumpolar Moon must not crash;
+          # the capped window still renders a plot.
+          ls polar-out/*plot*.png >/dev/null
+          echo "Deep-polar-night smoke test passed."
+
+      # --- Tier C: the actual add-on artifact (run.sh + real bashio) ---------
+      - name: Build and run the add-on image
+        run: |
+          set -eo pipefail
+          # Layer the add-on onto the image we just built (the PR's code).
+          docker build --build-arg BUILD_FROM=uptonight:smoke \
+            -t uptonight-addon:smoke uptonight-addon
+
+          # Mock the Supervisor so bashio::services resolves the MQTT broker.
+          docker run -d --name supervisor --network smoke-net \
+            -v "${{ github.workspace }}/ci/fake-supervisor.py:/srv.py:ro" \
+            python:3-alpine python /srv.py
+          sleep 3
+
+          # Capture the add-on's publishes (its observatory is "Addon", a
+          # different topic prefix from the earlier runs on this broker).
+          docker run -d --name subscriber-addon --network smoke-net \
+            eclipse-mosquitto:2 mosquitto_sub -h mosquitto -t 'uptonight/#' -F '%t'
+          sleep 2
+
+          mkdir -p addon-out
+          docker run --rm --network smoke-net \
+            -e SUPERVISOR_TOKEN=dummy \
+            -v "${{ github.workspace }}/addon-out:/config" \
+            uptonight-addon:smoke
+
+          sleep 3
+          docker logs subscriber-addon | sort -u > addon-topics.txt
+          echo "=== add-on topics ==="
+          cat addon-topics.txt
+
+      - name: Verify add-on (config generation + run + publish)
+        run: |
+          set -euo pipefail
+          # The add-on generated a config and the app produced output.
+          ls -la addon-out/out
+          test -f addon-out/out/uptonight-report.json
+          ls addon-out/out/*plot*.png >/dev/null
+          # And it published over MQTT via the real bashio + Supervisor path.
+          grep -qE '^uptonight/addon_.*/state$' addon-topics.txt
+          grep -qE '^uptonight/addon_.*/screen$' addon-topics.txt
+          echo "Add-on image smoke test passed."
