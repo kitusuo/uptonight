@@ -6,25 +6,25 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "astroplan>=0.10.1",
-    "astropy>=7.0",
+    "astropy>=8.0.1",
     "h5py>=3.16",
-    "matplotlib>=3.10",
-    "numpy>=2.1",
+    "matplotlib>=3.11.1",
+    "numpy>=2.5.2",
     "paho-mqtt>=2.1",
-    "pandas>=2.2",
-    "pillow>=10.3",
-    "pytz>=2024.1",
+    "pandas>=3.0.5",
+    "pillow>=12.3.0",
+    "pytz>=2026.3.post1",
     "pyyaml>=6.0",
     "requests>=2.32",
-    "skyfield>=1.49",
+    "skyfield>=1.55",
 ]
 
 [dependency-groups]
 build = [
-    "pyinstaller>=6.20.0",
+    "pyinstaller>=6.22.0",
 ]
 dev = [
-    "pytest>=8.3",
+    "pytest>=9.1.1",
     "pytest-cov>=6.0",
 ]
 
