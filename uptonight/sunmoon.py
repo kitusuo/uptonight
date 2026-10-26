@@ -165,6 +165,12 @@ class SunMoon:
         sun_next_setting_civil_short = sun_next_setting_civil.strftime("%m/%d %H:%M")
 
         with warnings.catch_warnings(record=True) as w:
+            # Record only astroplan's up/never-up warnings: the cascade below
+            # reads len(w) and w[-1], so any other warning (e.g. from a
+            # dependency) would derail it.
+            warnings.simplefilter("ignore")
+            warnings.simplefilter("always", TargetAlwaysUpWarning)
+            warnings.simplefilter("always", TargetNeverUpWarning)
             sun_next_setting = self._observer.sun_set_time(time, which="next", horizon=-18 * u.deg)
             if len(w):
                 if issubclass(w[-1].category, TargetAlwaysUpWarning):
