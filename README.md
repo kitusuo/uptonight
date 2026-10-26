@@ -230,12 +230,12 @@ The plot and the report will be located in the `./out`-diretory.
 
 > ***Note:*** Running UpTonight as a container is my preferred way of using it.
 
-***Docker Compose:*** Alternative example for docker-compose, here writing to the `www`-directory of Home Assistant and using my published image on Docker Hub:
+***Docker Compose:*** Alternative example for docker-compose, here writing to the `www`-directory of Home Assistant and using my published image on GitHub Container Registry (`ghcr.io`):
 
 ```yaml
 services:
   uptonight:
-    image: mawinkler/uptonight:latest
+    image: ghcr.io/mawinkler/uptonight:latest
     container_name: uptonight
     environment:
       - LONGITUDE=11d34m51.50s
@@ -251,7 +251,7 @@ Alternative using the `config.yaml` (see below):
 ```yaml
 services:
   uptonight:
-    image: mawinkler/uptonight:latest
+    image: ghcr.io/mawinkler/uptonight:latest
     container_name: uptonight
     volumes:
       - /home/smarthome/uptonight/config.yaml:/app/config.yaml
@@ -612,7 +612,7 @@ My `docker-compose.yaml`:
 
 ```yaml
   uptonight-garyimm:
-    image: mawinkler/uptonight:dev
+    image: ghcr.io/mawinkler/uptonight:latest
     container_name: uptonight-garyimm
     environment:
       - TARGET_LIST=targets/GaryImm
@@ -621,7 +621,7 @@ My `docker-compose.yaml`:
       - /home/smarthome/homeassistant/www/uptonight-garyimm:/app/out
 
   uptonight-herschel400:
-    image: mawinkler/uptonight:dev
+    image: ghcr.io/mawinkler/uptonight:latest
     container_name: uptonight-herschel400
     environment:
       - TARGET_LIST=targets/Herschel400
