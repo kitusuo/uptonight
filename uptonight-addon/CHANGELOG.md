@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.8.1
+
+- Fix comet brightness: the magnitude formula had the Earth and Sun distances
+  swapped and an extra factor on the slope parameter, so comet filtering and
+  the "brightest comet" pick used wrong values (upstream fix).
+- Fix an intermittent crash ("cannot concatenate times unless all locations
+  are set") when an unrelated warning occurred while working out tonight's
+  darkness.
+- Update dependencies, including astropy 8, numpy 2.5, matplotlib 3.11 and
+  Pillow 13, plus security updates for urllib3 and certifi.
+
 ## 2.8.0
 
 - Add an **Observation max hours** option to cap the observing window length.
