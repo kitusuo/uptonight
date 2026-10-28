@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.8.2
+
+- Update dependencies: astropy 8.0.2, numpy 2.5.4, matplotlib 3.11.2,
+  pandas 3.1.0 and pytz 2026.5.
+
 ## 2.8.1
 
 - Fix comet brightness: the magnitude formula had the Earth and Sun distances
