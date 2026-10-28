@@ -4,7 +4,7 @@
 # "uptonight" because that is the Python package). Installed locally it becomes
 # local_uptonight; via this repository it becomes <repo-hash>_uptonight.
 name: UpTonight
-version: "2.8.1"
+version: "2.8.2"
 slug: uptonight
 description: Best astrophotography targets for the night, published to MQTT for Home Assistant
 url: https://github.com/kitusuo/uptonight
